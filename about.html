@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GALYM AI — <span data-i18n="nav_about"></span></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<canvas id="bgCanvas"></canvas>
+<header>
+  <div class="header-inner">
+    <a href="index.html" class="logo"><span class="logo-dot"></span>GALYM<span>AI</span></a>
+    <nav>
+      <a href="index.html" data-i18n="nav_home">Главная</a>
+      <a href="about.html" data-i18n="nav_about">О нас</a>
+      <a href="courses.html" data-i18n="nav_courses">Курсы</a>
+      <a href="program.html" data-i18n="nav_program">Программа</a>
+      <a href="teachers.html" data-i18n="nav_teachers">Преподаватели</a>
+      <a href="news.html" data-i18n="nav_news">Новости</a>
+      <a href="contacts.html" data-i18n="nav_contacts">Контакты</a>
+      <a href="feedback.html" data-i18n="nav_feedback">Обратная связь</a>
+    </nav>
+    <div style="display:flex;align-items:center;gap:12px;" class="header-lang">
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="ru">RU</button>
+        <button class="lang-btn" data-lang="kz">KZ</button>
+        <button class="lang-btn" data-lang="en">EN</button>
+      </div>
+      <a href="courses.html" class="btn btn-primary header-cta" data-i18n="nav_enroll">Записаться</a>
+    </div>
+    <button class="burger" aria-label="Меню"><span></span><span></span><span></span></button>
+  </div>
+</header>
+<div class="mobile-nav">
+  <a href="index.html" data-i18n="nav_home">Главная</a>
+  <a href="about.html" data-i18n="nav_about">О нас</a>
+  <a href="courses.html" data-i18n="nav_courses">Курсы</a>
+  <a href="program.html" data-i18n="nav_program">Программа</a>
+  <a href="teachers.html" data-i18n="nav_teachers">Преподаватели</a>
+  <a href="news.html" data-i18n="nav_news">Новости</a>
+  <a href="contacts.html" data-i18n="nav_contacts">Контакты</a>
+  <a href="feedback.html" data-i18n="nav_feedback">Обратная связь</a>
+</div>
+
+<div class="page-hero">
+  <div class="page-hero-bg"></div>
+  <div class="container" style="position:relative;">
+    <div class="section-label" data-i18n="about_label">Наша история</div>
+    <h1><span data-i18n="about_h1">О клубе</span> <span class="text-accent">GALYM AI</span></h1>
+    <p data-i18n="about_p">Мы создаём среду, где каждый может освоить технологии будущего.</p>
+  </div>
+</div>
+
+<section>
+  <div class="container">
+    <div class="about-grid">
+      <div>
+        <div class="section-label reveal" data-i18n="who_label">Кто мы</div>
+        <h2 class="reveal" style="margin-bottom:24px;" data-i18n="who_h">Клуб, где рождается будущее</h2>
+        <p class="reveal" style="color:var(--text-muted);margin-bottom:20px;font-size:1.05rem;" data-i18n="who_p1">GALYM AI — это образовательный клуб в Актобе.</p>
+        <p class="reveal" style="color:var(--text-muted);margin-bottom:40px;" data-i18n="who_p2">Мы верим, что будущее принадлежит тем, кто умеет программировать.</p>
+        <div class="reveal"><a href="courses.html" class="btn btn-primary" data-i18n="nav_courses">Наши курсы</a></div>
+      </div>
+      <div class="about-visual">
+        <div class="about-blob about-blob-1">🧠</div>
+        <div class="about-blob about-blob-2">⚡</div>
+        <div class="stat-pill">
+          <span class="stat-num">200+</span>
+          <span style="color:var(--text-muted);font-size:.875rem;" data-i18n="stat_students">учеников</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0;">
+  <div class="container">
+    <div style="background:linear-gradient(135deg,rgba(123,110,246,.08),rgba(77,240,176,.05));border:1px solid rgba(123,110,246,.15);border-radius:var(--radius);padding:60px;text-align:center;" class="reveal">
+      <div class="section-label" style="justify-content:center;" data-i18n="mission_label">Наша миссия</div>
+      <h2 style="max-width:700px;margin:0 auto 20px;" data-i18n="mission_quote">"Дать каждому ребёнку ключ от мира технологий"</h2>
+      <p style="color:var(--text-muted);max-width:580px;margin:0 auto;font-size:1.05rem;" data-i18n="mission_p">Мы создаём среду, в которой учиться — это захватывающе.</p>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0;">
+  <div class="container">
+    <div class="section-label reveal" data-i18n="values_label">Наши ценности</div>
+    <h2 class="reveal" style="margin-bottom:8px;" data-i18n="values_h">То, во что мы верим</h2>
+    <p class="reveal" style="color:var(--text-muted);margin-bottom:48px;" data-i18n="values_p">Принципы, которыми мы руководствуемся каждый день</p>
+    <div class="values-grid">
+      <div class="value-item reveal"><h4 data-i18n="val1_h">🔥 Практика прежде всего</h4><p data-i18n="val1_p">Каждый урок — это реальный проект.</p></div>
+      <div class="value-item reveal reveal-delay-1"><h4 data-i18n="val2_h">💡 Любопытство</h4><p data-i18n="val2_p">Мы поощряем вопросы и смелые идеи.</p></div>
+      <div class="value-item reveal reveal-delay-2"><h4 data-i18n="val3_h">🤝 Сообщество</h4><p data-i18n="val3_p">Мы растём вместе.</p></div>
+      <div class="value-item reveal reveal-delay-3"><h4 data-i18n="val4_h">🌍 Доступность</h4><p data-i18n="val4_p">IT-образование для каждого ребёнка.</p></div>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0;">
+  <div class="container">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;">
+      <div style="background:var(--surface);padding:40px;text-align:center;" class="reveal">
+        <div style="font-family:var(--font-display);font-size:3rem;font-weight:800;color:var(--accent);">200+</div>
+        <div style="color:var(--text-muted);font-size:.9rem;margin-top:8px;" data-i18n="stat_students">Учеников</div>
+      </div>
+      <div style="background:var(--surface);padding:40px;text-align:center;" class="reveal reveal-delay-1">
+        <div style="font-family:var(--font-display);font-size:3rem;font-weight:800;color:var(--accent2);">10+</div>
+        <div style="color:var(--text-muted);font-size:.9rem;margin-top:8px;" data-i18n="stat_courses">Курсов</div>
+      </div>
+      <div style="background:var(--surface);padding:40px;text-align:center;" class="reveal reveal-delay-2">
+        <div style="font-family:var(--font-display);font-size:3rem;font-weight:800;color:var(--accent3);">3+</div>
+        <div style="color:var(--text-muted);font-size:.9rem;margin-top:8px;" data-i18n="stat_years">Года работы</div>
+      </div>
+      <div style="background:var(--surface);padding:40px;text-align:center;" class="reveal reveal-delay-3">
+        <div style="font-family:var(--font-display);font-size:3rem;font-weight:800;color:var(--accent);">95%</div>
+        <div style="color:var(--text-muted);font-size:.9rem;margin-top:8px;" data-i18n="stat_satisfaction">Довольных учеников</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-brand"><a href="index.html" class="logo"><span class="logo-dot"></span>GALYM<span>AI</span></a><p data-i18n="footer_desc">Образовательный клуб нового поколения.</p></div>
+      <div class="footer-col"><h4 data-i18n="footer_nav">Навигация</h4><a href="about.html" data-i18n="nav_about">О нас</a><a href="courses.html" data-i18n="nav_courses">Курсы</a><a href="program.html" data-i18n="nav_program">Программа</a><a href="teachers.html" data-i18n="nav_teachers">Преподаватели</a></div>
+      <div class="footer-col"><h4 data-i18n="footer_contacts">Контакты</h4><a href="contacts.html">г. Актобе</a><a href="mailto:info@galym-ai.kz">info@galym-ai.kz</a><a href="tel:+77001234567">+7 700 123 45 67</a><a href="feedback.html" data-i18n="nav_feedback">Обратная связь</a></div>
+    </div>
+    <div class="footer-bottom"><span data-i18n="footer_rights">© 2024 GALYM AI.</span><span data-i18n="footer_city">Актобе, Казахстан</span></div>
+  </div>
+</footer>
+<script src="js/i18n.js"></script>
+<script src="js/script.js"></script>
+</body>
+</html>

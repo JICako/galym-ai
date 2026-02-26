@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GALYM AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<canvas id="bgCanvas"></canvas>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <a href="index.html" class="logo"><span class="logo-dot"></span>GALYM<span>AI</span></a>
+    <nav>
+      <a href="index.html" data-i18n="nav_home">Главная</a>
+      <a href="about.html" data-i18n="nav_about">О нас</a>
+      <a href="courses.html" data-i18n="nav_courses">Курсы</a>
+      <a href="program.html" data-i18n="nav_program">Программа</a>
+      <a href="teachers.html" data-i18n="nav_teachers">Преподаватели</a>
+      <a href="news.html" data-i18n="nav_news">Новости</a>
+      <a href="contacts.html" data-i18n="nav_contacts">Контакты</a>
+      <a href="feedback.html" data-i18n="nav_feedback">Обратная связь</a>
+    </nav>
+    <div style="display:flex;align-items:center;gap:12px;" class="header-lang">
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="ru">RU</button>
+        <button class="lang-btn" data-lang="kz">KZ</button>
+        <button class="lang-btn" data-lang="en">EN</button>
+      </div>
+      <a href="courses.html" class="btn btn-primary header-cta" data-i18n="nav_enroll">Записаться</a>
+    </div>
+    <button class="burger" aria-label="Меню"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<div class="mobile-nav">
+  <a href="index.html" data-i18n="nav_home">Главная</a>
+  <a href="about.html" data-i18n="nav_about">О нас</a>
+  <a href="courses.html" data-i18n="nav_courses">Курсы</a>
+  <a href="program.html" data-i18n="nav_program">Программа</a>
+  <a href="teachers.html" data-i18n="nav_teachers">Преподаватели</a>
+  <a href="news.html" data-i18n="nav_news">Новости</a>
+  <a href="contacts.html" data-i18n="nav_contacts">Контакты</a>
+  <a href="feedback.html" data-i18n="nav_feedback">Обратная связь</a>
+</div>
+
+<!-- Mobile lang switcher (fixed bottom) -->
+<div class="lang-switcher" style="display:none;" id="mobileLang">
+  <button class="lang-btn" data-lang="ru">RU</button>
+  <button class="lang-btn" data-lang="kz">KZ</button>
+  <button class="lang-btn" data-lang="en">EN</button>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="hero-badge-dot"></span>
+        <span data-i18n="hero_badge">Образовательный клуб нового поколения</span>
+      </div>
+      <h1>
+        <span class="line"><span data-i18n="hero_h1_1">Учись. Создавай.</span></span>
+        <span class="line"><span>Будь в <span class="text-accent" data-i18n="hero_h1_2">будущем.</span></span></span>
+      </h1>
+      <p data-i18n="hero_p">GALYM AI — клуб, где технологии и знания сливаются воедино.</p>
+      <div class="hero-buttons">
+        <a href="courses.html" class="btn btn-primary btn-large" data-i18n="hero_btn_courses">Выбрать курс</a>
+        <a href="about.html" class="btn btn-outline btn-large" data-i18n="hero_btn_about">Узнать больше</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section>
+  <div class="container">
+    <div class="section-label" data-i18n="section_why">Почему мы</div>
+    <h2><span data-i18n="section_advantages">Преимущества GALYM AI</span></h2>
+    <div class="features-grid">
+      <div class="feature-card reveal">
+        <div class="feature-icon">🚀</div>
+        <h3 data-i18n="feat1_h">Практический подход</h3>
+        <p data-i18n="feat1_p">Обучение через реальные проекты.</p>
+      </div>
+      <div class="feature-card reveal reveal-delay-1">
+        <div class="feature-icon">🤖</div>
+        <h3 data-i18n="feat2_h">Современные технологии</h3>
+        <p data-i18n="feat2_p">ИИ, машинное обучение, робототехника.</p>
+      </div>
+      <div class="feature-card reveal reveal-delay-2">
+        <div class="feature-icon">👨‍🏫</div>
+        <h3 data-i18n="feat3_h">Опытные наставники</h3>
+        <p data-i18n="feat3_p">Преподаватели с реальным опытом.</p>
+      </div>
+      <div class="feature-card reveal reveal-delay-3">
+        <div class="feature-icon">🏆</div>
+        <h3 data-i18n="feat4_h">Сертификаты</h3>
+        <p data-i18n="feat4_p">Подтверждение ваших компетенций.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section style="padding:80px 0;">
+  <div class="container">
+    <div style="background:linear-gradient(135deg,rgba(77,240,176,.08),rgba(123,110,246,.08));border:1px solid rgba(77,240,176,.15);border-radius:24px;padding:60px;text-align:center;" class="reveal">
+      <div class="section-label" style="justify-content:center;" data-i18n="cta_label">Начни сегодня</div>
+      <h2 style="margin-bottom:16px;" data-i18n="cta_h">Готов к новым знаниям?</h2>
+      <p style="color:var(--text-muted);max-width:500px;margin:0 auto 32px;" data-i18n="cta_p">Присоединяйся к GALYM AI.</p>
+      <a href="courses.html" class="btn btn-primary btn-large" data-i18n="cta_btn">Смотреть курсы</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a href="index.html" class="logo"><span class="logo-dot"></span>GALYM<span>AI</span></a>
+        <p data-i18n="footer_desc">Образовательный клуб нового поколения в Актобе.</p>
+      </div>
+      <div class="footer-col">
+        <h4 data-i18n="footer_nav">Навигация</h4>
+        <a href="about.html" data-i18n="nav_about">О нас</a>
+        <a href="courses.html" data-i18n="nav_courses">Курсы</a>
+        <a href="program.html" data-i18n="nav_program">Программа</a>
+        <a href="teachers.html" data-i18n="nav_teachers">Преподаватели</a>
+      </div>
+      <div class="footer-col">
+        <h4 data-i18n="footer_contacts">Контакты</h4>
+        <a href="contacts.html" data-i18n="cont_addr_h">Адрес</a>
+        <a href="mailto:info@galym-ai.kz">info@galym-ai.kz</a>
+        <a href="tel:+77001234567">+7 700 123 45 67</a>
+        <a href="feedback.html" data-i18n="nav_feedback">Обратная связь</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span data-i18n="footer_rights">© 2024 GALYM AI. Все права защищены.</span>
+      <span data-i18n="footer_city">Актобе, Казахстан</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/i18n.js"></script>
+<script src="js/script.js"></script>
+<script>
+  // Show mobile lang on small screens
+  const ml = document.getElementById('mobileLang');
+  if (window.innerWidth <= 768 && ml) ml.style.display = 'flex';
+</script>
+</body>
+</html>

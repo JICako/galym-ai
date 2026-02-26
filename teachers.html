@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GALYM AI — Преподаватели</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<canvas id="bgCanvas"></canvas>
+<header>
+  <div class="header-inner">
+    <a href="index.html" class="logo"><span class="logo-dot"></span>GALYM<span>AI</span></a>
+    <nav>
+      <a href="index.html" data-i18n="nav_home">Главная</a>
+      <a href="about.html" data-i18n="nav_about">О нас</a>
+      <a href="courses.html" data-i18n="nav_courses">Курсы</a>
+      <a href="program.html" data-i18n="nav_program">Программа</a>
+      <a href="teachers.html" data-i18n="nav_teachers">Преподаватели</a>
+      <a href="news.html" data-i18n="nav_news">Новости</a>
+      <a href="contacts.html" data-i18n="nav_contacts">Контакты</a>
+      <a href="feedback.html" data-i18n="nav_feedback">Обратная связь</a>
+    </nav>
+    <div style="display:flex;align-items:center;gap:12px;" class="header-lang">
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="ru">RU</button>
+        <button class="lang-btn" data-lang="kz">KZ</button>
+        <button class="lang-btn" data-lang="en">EN</button>
+      </div>
+      <a href="courses.html" class="btn btn-primary header-cta" data-i18n="nav_enroll">Записаться</a>
+    </div>
+    <button class="burger" aria-label="Меню"><span></span><span></span><span></span></button>
+  </div>
+</header>
+<div class="mobile-nav">
+  <a href="index.html" data-i18n="nav_home">Главная</a>
+  <a href="about.html" data-i18n="nav_about">О нас</a>
+  <a href="courses.html" data-i18n="nav_courses">Курсы</a>
+  <a href="program.html" data-i18n="nav_program">Программа</a>
+  <a href="teachers.html" data-i18n="nav_teachers">Преподаватели</a>
+  <a href="news.html" data-i18n="nav_news">Новости</a>
+  <a href="contacts.html" data-i18n="nav_contacts">Контакты</a>
+  <a href="feedback.html" data-i18n="nav_feedback">Обратная связь</a>
+</div>
+
+<div class="page-hero">
+  <div class="page-hero-bg"></div>
+  <div class="container" style="position:relative;">
+    <div class="section-label" data-i18n="teach_label">Наша команда</div>
+    <h1><span data-i18n="teach_h1">Преподаватели GALYM AI</span></h1>
+    <p data-i18n="teach_p">Профессионалы с реальным опытом в индустрии.</p>
+  </div>
+</div>
+
+<section>
+  <div class="container">
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px;">
+      <div class="teacher-card reveal">
+        <img class="teacher-img" src="https://picsum.photos/seed/teacher1/400/400" alt="">
+        <div class="teacher-info">
+          <h3 data-i18n="t1_name">Ален Галымов</h3>
+          <p data-i18n="t1_role">Основатель & Преподаватель Python / AI</p>
+          <div style="color:var(--text-muted);font-size:.82rem;margin-top:12px;" data-i18n="t1_bio">5+ лет в разработке</div>
+        </div>
+      </div>
+      <div class="teacher-card reveal reveal-delay-1">
+        <img class="teacher-img" src="https://picsum.photos/seed/teacher2/400/400" alt="">
+        <div class="teacher-info">
+          <h3 data-i18n="t2_name">Дамир Сейтжанов</h3>
+          <p data-i18n="t2_role">Преподаватель Веб-разработки</p>
+          <div style="color:var(--text-muted);font-size:.82rem;margin-top:12px;" data-i18n="t2_bio">Frontend-разработчик</div>
+        </div>
+      </div>
+      <div class="teacher-card reveal reveal-delay-2">
+        <img class="teacher-img" src="https://picsum.photos/seed/teacher3/400/400" alt="">
+        <div class="teacher-info">
+          <h3 data-i18n="t3_name">Айгерим Нурланова</h3>
+          <p data-i18n="t3_role">Преподаватель Робототехники</p>
+          <div style="color:var(--text-muted);font-size:.82rem;margin-top:12px;" data-i18n="t3_bio">Инженер-механик</div>
+        </div>
+      </div>
+      <div class="teacher-card reveal reveal-delay-3">
+        <img class="teacher-img" src="https://picsum.photos/seed/teacher4/400/400" alt="">
+        <div class="teacher-info">
+          <h3 data-i18n="t4_name">Тимур Байтасов</h3>
+          <p data-i18n="t4_role">Преподаватель Gamedev / Scratch</p>
+          <div style="color:var(--text-muted);font-size:.82rem;margin-top:12px;" data-i18n="t4_bio">Разработчик инди-игр</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0;">
+  <div class="container">
+    <div style="background:linear-gradient(135deg,rgba(123,110,246,.08),rgba(240,106,77,.06));border:1px solid rgba(123,110,246,.15);border-radius:var(--radius);padding:60px;text-align:center;" class="reveal">
+      <div class="section-label" style="justify-content:center;" data-i18n="join_label">Присоединяйся</div>
+      <h2 style="margin-bottom:16px;" data-i18n="join_h">Хочешь стать частью команды?</h2>
+      <p style="color:var(--text-muted);max-width:500px;margin:0 auto 32px;" data-i18n="join_p">Мы всегда рады талантливым людям.</p>
+      <a href="feedback.html" class="btn btn-outline btn-large" data-i18n="join_btn">Написать нам</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-brand"><a href="index.html" class="logo"><span class="logo-dot"></span>GALYM<span>AI</span></a><p data-i18n="footer_desc">Образовательный клуб нового поколения.</p></div>
+      <div class="footer-col"><h4 data-i18n="footer_nav">Навигация</h4><a href="about.html" data-i18n="nav_about">О нас</a><a href="courses.html" data-i18n="nav_courses">Курсы</a><a href="program.html" data-i18n="nav_program">Программа</a><a href="teachers.html" data-i18n="nav_teachers">Преподаватели</a></div>
+      <div class="footer-col"><h4 data-i18n="footer_contacts">Контакты</h4><a href="contacts.html">г. Актобе</a><a href="mailto:info@galym-ai.kz">info@galym-ai.kz</a><a href="tel:+77001234567">+7 700 123 45 67</a><a href="feedback.html" data-i18n="nav_feedback">Обратная связь</a></div>
+    </div>
+    <div class="footer-bottom"><span data-i18n="footer_rights">© 2024 GALYM AI.</span><span data-i18n="footer_city">Актобе, Казахстан</span></div>
+  </div>
+</footer>
+<script src="js/i18n.js"></script>
+<script src="js/script.js"></script>
+</body>
+</html>
