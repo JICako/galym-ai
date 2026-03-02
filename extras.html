@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GALYM AI — Курсы</title>
+  <title>GALYM AI — Дополнительное</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="css/style.css">
@@ -115,18 +115,70 @@
 <div class="page-hero">
   <div class="page-hero-bg"></div>
   <div class="container" style="position:relative">
-    <div class="section-label" data-i18n="courses_label">Наши направления</div>
-    <h1 data-i18n="courses_h1">Курсы GALYM AI</h1>
-    <p data-i18n="courses_p">Выбери направление, которое тебя вдохновляет.</p>
+    <div class="section-label" data-i18n="extras_label">Полезные инструменты</div>
+    <h1 data-i18n="extras_h1">Дополнительное</h1>
+    <p data-i18n="extras_p">Лучшие ИИ-инструменты для учёбы, творчества и работы — собраны в одном месте.</p>
   </div>
 </div>
+
 <section>
   <div class="container">
-    <div class="cards-grid" id="coursesGrid">
+    <div class="section-label reveal" data-i18n="ai_tools_label">ИИ-инструменты</div>
+    <h2 class="reveal" style="margin-bottom:10px" data-i18n="ai_tools_h">15 лучших ИИ прямо сейчас</h2>
+    <p class="reveal" style="color:var(--text-muted);margin-bottom:28px;max-width:600px" data-i18n="ai_tools_p">Нажмите «Открыть» чтобы перейти к инструменту. Все ссылки ведут на официальные сайты.</p>
+
+    <!-- Filter tabs -->
+    <div class="filter-tabs reveal">
+      <button class="filter-tab active" data-filter="all" data-i18n="filter_all">Все</button>
+      <button class="filter-tab" data-filter="free" data-i18n="filter_free">Бесплатные</button>
+      <button class="filter-tab" data-filter="paid" data-i18n="filter_paid">Платные</button>
+      <button class="filter-tab" data-filter="text" data-i18n="filter_text">Текст и чат</button>
+      <button class="filter-tab" data-filter="image" data-i18n="filter_image">Изображения</button>
+      <button class="filter-tab" data-filter="video" data-i18n="filter_video">Видео</button>
+      <button class="filter-tab" data-filter="code" data-i18n="filter_code">Код</button>
+    </div>
+
+    <div class="ai-tools-grid" id="aiToolsGrid">
       <!-- Заполняется из js/content.js -->
     </div>
   </div>
 </section>
+
+<section style="padding-top:0">
+  <div class="container">
+    <div class="cta-block reveal" style="text-align:center">
+      <div class="section-label" style="justify-content:center">🎓</div>
+      <h2 style="margin-bottom:14px" data-i18n="extras_cta_h">Хочешь научиться работать с ИИ?</h2>
+      <p style="color:var(--text-muted);max-width:460px;margin:0 auto 28px" data-i18n="extras_cta_p">На курсе «Искусственный интеллект» мы разберём все эти инструменты изнутри.</p>
+      <a href="courses.html" class="btn btn-primary btn-large" data-i18n="cta_btn">Смотреть курсы</a>
+    </div>
+  </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.filter-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      filterAiTools(tab.dataset.filter);
+    });
+  });
+});
+
+function filterAiTools(filter) {
+  const cards = document.querySelectorAll('.ai-tool-card');
+  cards.forEach(card => {
+    if (filter === 'all') { card.style.display = ''; return; }
+    const isFree  = card.dataset.free === 'true';
+    const cats    = (card.dataset.cats || '').split(',');
+    if (filter === 'free' && isFree)        { card.style.display = ''; return; }
+    if (filter === 'paid' && !isFree)       { card.style.display = ''; return; }
+    if (cats.includes(filter))              { card.style.display = ''; return; }
+    card.style.display = 'none';
+  });
+}
+</script>
 <footer>
   <div class="container">
     <div class="footer-inner">

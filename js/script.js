@@ -1,9 +1,54 @@
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 // GALYM AI — script.js
-// Features: i18n, canvas bg, scroll animations, header
-// ═══════════════════════════════════════════════════════
+// Функции: тёмный/светлый режим, галерея новостей,
+//          языки (RU/KZ/EN), фоновая картинка, анимации
+// ═══════════════════════════════════════════════════════════════
 
-// ─── LANGUAGE ───
+// ────────────────────────────────────────────
+// 1. ТЕМА (ТЁМНЫЙ / СВЕТЛЫЙ РЕЖИМ)
+// ────────────────────────────────────────────
+const THEME_KEY = 'galym_theme';
+
+function applyTheme(theme) {
+  if (theme === 'dark') {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
+  localStorage.setItem(THEME_KEY, theme);
+  updateThemeButtons();
+}
+
+function toggleTheme() {
+  const isDark = document.documentElement.classList.contains('dark');
+  applyTheme(isDark ? 'light' : 'dark');
+}
+
+function updateThemeButtons() {
+  const isDark = document.documentElement.classList.contains('dark');
+  document.querySelectorAll('.theme-toggle').forEach(btn => {
+    btn.setAttribute('aria-label', isDark ? 'Светлая тема' : 'Тёмная тема');
+    btn.title = isDark ? 'Светлая тема' : 'Тёмная тема';
+  });
+  document.querySelectorAll('.theme-icon-sun').forEach(el => {
+    el.style.opacity = isDark ? '0.4' : '1';
+  });
+  document.querySelectorAll('.theme-icon-moon').forEach(el => {
+    el.style.opacity = isDark ? '1' : '0.4';
+  });
+}
+
+// Применяем сохранённую тему сразу (до DOMContentLoaded, чтобы не мигало)
+(function() {
+  const saved = localStorage.getItem(THEME_KEY);
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  applyTheme(saved || (prefersDark ? 'dark' : 'light'));
+})();
+
+
+// ────────────────────────────────────────────
+// 2. ЯЗЫК (RU / KZ / EN)
+// ────────────────────────────────────────────
 const LANG_KEY = 'galym_lang';
 let currentLang = localStorage.getItem(LANG_KEY) || 'ru';
 
@@ -12,37 +57,264 @@ function setLang(lang) {
   localStorage.setItem(LANG_KEY, lang);
   applyTranslations();
   updateLangButtons();
+  renderDynamicContent(); // обновить динамический контент при смене языка
 }
 
 function t(key) {
-  return (i18n[currentLang] && i18n[currentLang][key]) || (i18n.ru && i18n.ru[key]) || key;
+  return (i18n[currentLang] && i18n[currentLang][key])
+      || (i18n.ru && i18n.ru[key])
+      || key;
 }
 
 function applyTranslations() {
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
     const attr = el.getAttribute('data-i18n-attr');
-    const val = t(key);
-    if (attr) {
-      el.setAttribute(attr, val);
-    } else {
-      el.textContent = val;
-    }
+    if (attr) el.setAttribute(attr, t(key));
+    else el.textContent = t(key);
   });
   document.querySelectorAll('[data-i18n-html]').forEach(el => {
-    const key = el.getAttribute('data-i18n-html');
-    el.innerHTML = t(key).replace(/\n/g, '<br>');
+    el.innerHTML = t(el.getAttribute('data-i18n-html')).replace(/\n/g, '<br>');
   });
   document.documentElement.lang = currentLang;
 }
 
 function updateLangButtons() {
-  document.querySelectorAll('.lang-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.lang === currentLang);
-  });
+  document.querySelectorAll('.lang-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.lang === currentLang)
+  );
 }
 
-// ─── HEADER SCROLL ───
+
+// ────────────────────────────────────────────
+// 3. ФОНОВАЯ КАРТИНКА (из content.js)
+// ────────────────────────────────────────────
+function applyBackground() {
+  if (typeof SITE_CONTENT === 'undefined') return;
+  const bg = document.querySelector('.site-bg');
+  if (!bg) return;
+
+  const url = SITE_CONTENT.backgrounds.main;
+  const fallback = SITE_CONTENT.backgrounds.fallback;
+
+  // Загружаем картинку, при ошибке — запасная
+  const img = new Image();
+  img.onload  = () => { bg.style.backgroundImage = `url('${url}')`; };
+  img.onerror = () => { bg.style.backgroundImage = `url('${fallback}')`; };
+  img.src = url;
+}
+
+
+// ────────────────────────────────────────────
+// 4. ДИНАМИЧЕСКИЙ РЕНДЕР КОНТЕНТА ИЗ content.js
+// ────────────────────────────────────────────
+function renderDynamicContent() {
+  if (typeof SITE_CONTENT === 'undefined') return;
+  renderCourses();
+  renderTeachers();
+  renderNews();
+  renderEvents();
+  renderAiTools();
+}
+
+/* ── Курсы ── */
+function renderCourses() {
+  const grid = document.getElementById('coursesGrid');
+  if (!grid || !SITE_CONTENT.courses) return;
+
+  const levelLabels = {
+    beginner:     { ru: 'Начальный', kz: 'Бастауыш', en: 'Beginner' },
+    intermediate: { ru: 'Средний',   kz: 'Орта',     en: 'Intermediate' },
+    advanced:     { ru: 'Продвинутый', kz: 'Жетілдірілген', en: 'Advanced' },
+  };
+
+  grid.innerHTML = SITE_CONTENT.courses.map(c => {
+    const title = c[`title${cap(currentLang)}`] || c.titleRu;
+    const desc  = c[`desc${cap(currentLang)}`]  || c.descRu;
+    const level = levelLabels[c.level]?.[currentLang] || c.level;
+    const months = currentLang === 'kz' ? 'ай' : currentLang === 'en' ? 'mo.' : 'мес.';
+    const lessons = currentLang === 'kz' ? 'сабақ' : currentLang === 'en' ? 'lessons' : 'уроков';
+
+    return `
+    <div class="course-card reveal">
+      <div class="course-number">${c.number}</div>
+      <div class="course-level level-${c.level}">${level}</div>
+      <h3>${title}</h3>
+      <p>${desc}</p>
+      <div class="course-meta">
+        <div class="course-meta-item">📅 ${c.duration} ${months}</div>
+        <div class="course-meta-item">🧒 ${c.age}</div>
+        <div class="course-meta-item">📚 ${c.lessons} ${lessons}</div>
+      </div>
+      <a href="${c.formUrl}" target="_blank" class="btn btn-primary" style="width:100%;justify-content:center;">
+        ${t('enroll_btn')}
+      </a>
+    </div>`;
+  }).join('');
+
+  // Переподключаем reveal наблюдатель для новых элементов
+  grid.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+}
+
+/* ── Преподаватели ── */
+function renderTeachers() {
+  const grid = document.getElementById('teachersGrid');
+  if (!grid || !SITE_CONTENT.teachers) return;
+
+  grid.innerHTML = SITE_CONTENT.teachers.map((t_, i) => {
+    const name = t_[`name${cap(currentLang)}`] || t_.nameRu;
+    const role = t_[`role${cap(currentLang)}`] || t_.roleRu;
+    const bio  = t_[`bio${cap(currentLang)}`]  || t_.bioRu;
+    const delay = i > 0 ? ` reveal-delay-${Math.min(i, 4)}` : '';
+
+    return `
+    <div class="teacher-card reveal${delay}">
+      <img class="teacher-img" src="${t_.photo}" alt="${name}" loading="lazy">
+      <div class="teacher-info">
+        <h3>${name}</h3>
+        <p class="role">${role}</p>
+        <p class="bio">${bio}</p>
+      </div>
+    </div>`;
+  }).join('');
+
+  grid.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+}
+
+/* ── Новости ── */
+function renderNews() {
+  const grid = document.getElementById('newsGrid');
+  if (!grid || !SITE_CONTENT.news) return;
+
+  grid.innerHTML = SITE_CONTENT.news.map((n, i) => {
+    const date  = n[`date${cap(currentLang)}`]  || n.dateRu;
+    const title = n[`title${cap(currentLang)}`] || n.titleRu;
+    const text  = n[`text${cap(currentLang)}`]  || n.textRu;
+    const readMore = { ru: 'Смотреть фото →', kz: 'Фотоларды қарау →', en: 'View photos →' };
+    const delay = i > 0 ? ` reveal-delay-${Math.min(i, 4)}` : '';
+
+    return `
+    <div class="news-card reveal${delay}" data-news-index="${i}">
+      <div class="news-img">${n.emoji}</div>
+      <div class="news-body">
+        <div class="news-date">${date}</div>
+        <h3>${title}</h3>
+        <p>${text.substring(0, 120)}…</p>
+        <div class="news-read-more">
+          <span>${readMore[currentLang]}</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Клик → открыть галерею
+  grid.querySelectorAll('.news-card').forEach(card => {
+    card.addEventListener('click', () => {
+      openGallery(parseInt(card.dataset.newsIndex));
+    });
+  });
+
+  grid.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+}
+
+function cap(lang) {
+  return lang.charAt(0).toUpperCase() + lang.slice(1);
+}
+
+
+// ────────────────────────────────────────────
+// 5. ГАЛЕРЕЯ МЕРОПРИЯТИЙ
+// ────────────────────────────────────────────
+let galleryCurrentPhoto = 0;
+let galleryCurrentEvent = null;
+
+function openGallery(newsIndex) {
+  const ev = SITE_CONTENT.news[newsIndex];
+  if (!ev) return;
+  galleryCurrentEvent = ev;
+  galleryCurrentPhoto = 0;
+  const overlay = document.getElementById('galleryOverlay');
+  if (!overlay) return;
+  document.getElementById('galleryDate').textContent  = ev[`date${cap(currentLang)}`]  || ev.dateRu;
+  document.getElementById('galleryTitle').textContent = ev[`title${cap(currentLang)}`] || ev.titleRu;
+  document.getElementById('galleryText').textContent  = ev[`text${cap(currentLang)}`]  || ev.textRu;
+  const videoSection = document.getElementById('galleryVideos');
+  if (videoSection) { videoSection.innerHTML = ''; videoSection.style.display = 'none'; }
+  const thumbs = document.getElementById('galleryThumbs');
+  const photoSection = document.getElementById('galleryPhotoSection');
+  if (ev.photos && ev.photos.length > 0) {
+    thumbs.innerHTML = ev.photos.map((src, i) =>
+      `<div class="gallery-thumb${i === 0 ? ' active' : ''}" data-index="${i}"><img src="${src}" alt="" loading="lazy"></div>`
+    ).join('');
+    thumbs.querySelectorAll('.gallery-thumb').forEach(th => {
+      th.addEventListener('click', () => setGalleryPhoto(parseInt(th.dataset.index)));
+    });
+    if (photoSection) photoSection.style.display = 'block';
+    showGalleryPhoto(0);
+  } else {
+    if (photoSection) photoSection.style.display = 'none';
+  }
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeGallery() {
+  document.getElementById('galleryOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function setGalleryPhoto(index) {
+  if (!galleryCurrentEvent) return;
+  const total = galleryCurrentEvent.photos.length;
+  galleryCurrentPhoto = (index + total) % total;
+  showGalleryPhoto(galleryCurrentPhoto);
+}
+
+function showGalleryPhoto(index) {
+  if (!galleryCurrentEvent) return;
+  const photos = galleryCurrentEvent.photos;
+  const total = photos.length;
+
+  // Главное фото
+  const mainImg = document.getElementById('galleryMainImg');
+  if (mainImg) {
+    mainImg.style.opacity = '0';
+    mainImg.src = photos[index];
+    mainImg.onload = () => { mainImg.style.opacity = '1'; };
+    mainImg.style.transition = 'opacity 0.25s ease';
+  }
+
+  // Счётчик
+  const count = document.getElementById('galleryCount');
+  if (count) {
+    const labels = { ru: 'из', kz: 'ішінен', en: 'of' };
+    count.textContent = `${index + 1} ${labels[currentLang] || 'из'} ${total}`;
+  }
+
+  // Активная миниатюра
+  document.querySelectorAll('.gallery-thumb').forEach((th, i) => {
+    th.classList.toggle('active', i === index);
+  });
+
+  // Прокрутить миниатюру в видимую область
+  const activeTh = document.querySelector('.gallery-thumb.active');
+  if (activeTh) activeTh.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+}
+
+// Keyboard navigation in gallery
+document.addEventListener('keydown', e => {
+  const overlay = document.getElementById('galleryOverlay');
+  if (!overlay || !overlay.classList.contains('open')) return;
+  if (e.key === 'ArrowRight') setGalleryPhoto(galleryCurrentPhoto + 1);
+  if (e.key === 'ArrowLeft')  setGalleryPhoto(galleryCurrentPhoto - 1);
+  if (e.key === 'Escape')     closeGallery();
+});
+
+
+// ────────────────────────────────────────────
+// 6. HEADER SCROLL
+// ────────────────────────────────────────────
 const header = document.querySelector('header');
 function updateHeader() {
   if (!header) return;
@@ -51,19 +323,23 @@ function updateHeader() {
 window.addEventListener('scroll', updateHeader, { passive: true });
 updateHeader();
 
-// ─── ACTIVE NAV ───
+
+// ────────────────────────────────────────────
+// 7. ACTIVE NAV LINK
+// ────────────────────────────────────────────
 (function() {
   const path = window.location.pathname.split('/').pop() || 'index.html';
   document.querySelectorAll('nav a, .mobile-nav a').forEach(link => {
-    const href = link.getAttribute('href');
-    if (href === path || (path === '' && href === 'index.html')) {
+    if (link.getAttribute('href') === path || (path === '' && link.getAttribute('href') === 'index.html'))
       link.classList.add('active');
-    }
   });
 })();
 
-// ─── BURGER MENU ───
-const burger = document.querySelector('.burger');
+
+// ────────────────────────────────────────────
+// 8. BURGER MENU
+// ────────────────────────────────────────────
+const burger    = document.querySelector('.burger');
 const mobileNav = document.querySelector('.mobile-nav');
 if (burger && mobileNav) {
   burger.addEventListener('click', () => {
@@ -80,231 +356,312 @@ if (burger && mobileNav) {
   });
 }
 
-// ─── SCROLL REVEAL ───
-const revealObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-      revealObserver.unobserve(entry.target);
+
+// ────────────────────────────────────────────
+// 9. SCROLL REVEAL ANIMATION
+// ────────────────────────────────────────────
+const revealObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      revealObserver.unobserve(e.target);
     }
   });
-}, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+}, { threshold: 0.09, rootMargin: '0px 0px -28px 0px' });
+
 document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
-// ─── FEEDBACK FORM → GOOGLE FORMS ───
+
+// ────────────────────────────────────────────
+// 10. FEEDBACK FORM → GOOGLE FORMS
+// ────────────────────────────────────────────
 const feedbackForm = document.getElementById('feedbackForm');
 if (feedbackForm) {
-  feedbackForm.addEventListener('submit', function(e) {
+  feedbackForm.addEventListener('submit', e => {
     e.preventDefault();
-    window.open('https://forms.google.com/example', '_blank');
-    const success = document.querySelector('.form-success');
-    if (success) {
-      success.style.display = 'block';
-      setTimeout(() => { success.style.display = 'none'; }, 4000);
+    const url = (typeof SITE_CONTENT !== 'undefined')
+      ? SITE_CONTENT.contacts.googleForms
+      : 'https://forms.google.com/example';
+    window.open(url, '_blank');
+    const s = document.querySelector('.form-success');
+    if (s) {
+      s.textContent = t('form_success') || '✓ Перенаправляем на форму...';
+      s.style.display = 'block';
+      setTimeout(() => s.style.display = 'none', 4000);
     }
   });
 }
 
-// ─── HERO ANIMATION ───
-if (!document.getElementById('heroStyles')) {
-  const style = document.createElement('style');
-  style.id = 'heroStyles';
-  style.textContent = `
-    @keyframes slideUp { from { transform:translateY(110%); opacity:0; } to { transform:translateY(0); opacity:1; } }
-    @keyframes fadeInUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
-    .hero-badge { animation: fadeInUp 0.7s ease 0.1s both; }
-    .hero h1 .line { overflow:hidden; }
-    .hero h1 .line:nth-child(1) span { display:block; animation: slideUp 0.9s cubic-bezier(.4,0,.2,1) 0.2s both; }
-    .hero h1 .line:nth-child(2) span { display:block; animation: slideUp 0.9s cubic-bezier(.4,0,.2,1) 0.38s both; }
-    .hero p { animation: fadeInUp 0.7s ease 0.56s both; }
-    .hero-buttons { animation: fadeInUp 0.7s ease 0.72s both; }
-  `;
-  document.head.appendChild(style);
-}
 
-// ════════════════════════════════════════════════════════
-// ─── DYNAMIC CANVAS BACKGROUND ───
-// ════════════════════════════════════════════════════════
-(function initCanvasBg() {
-  const canvas = document.getElementById('bgCanvas');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
+// ────────────────────────────────────────────
+// 11. FULLSCREEN BUTTON
+// ────────────────────────────────────────────
+(function() {
+  const btn = document.getElementById('fullscreenBtn');
+  if (!btn) return;
+  const iconExpand   = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>`;
+  const iconCollapse = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 3 3 3 3 8"/><polyline points="21 16 21 21 16 21"/><line x1="3" y1="3" x2="10" y2="10"/><line x1="21" y1="21" x2="14" y2="14"/></svg>`;
+  btn.innerHTML = iconExpand;
 
-  let W, H, scrollY = 0, mouseX = 0.5, mouseY = 0.5;
-  const DPR = Math.min(window.devicePixelRatio || 1, 2);
+  function isFull() { return !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement); }
+  function updateIcon() { btn.innerHTML = isFull() ? iconCollapse : iconExpand; }
 
-  function resize() {
-    W = canvas.offsetWidth;
-    H = canvas.offsetHeight;
-    canvas.width = W * DPR;
-    canvas.height = H * DPR;
-    ctx.scale(DPR, DPR);
-  }
-  window.addEventListener('resize', resize);
-  resize();
-
-  window.addEventListener('scroll', () => { scrollY = window.scrollY; }, { passive: true });
-  window.addEventListener('mousemove', e => {
-    mouseX = e.clientX / window.innerWidth;
-    mouseY = e.clientY / window.innerHeight;
-  }, { passive: true });
-
-  const COLORS = ['#4DF0B0', '#7B6EF6', '#F06A4D', '#4DB8F0'];
-
-  // ── Particles ──
-  const particles = [];
-  const PCOUNT = 55;
-
-  class Particle {
-    constructor() { this.reset(true); }
-    reset(init) {
-      this.x = Math.random() * (W || 1200);
-      this.y = init ? Math.random() * (H || 800) : (H || 800) + 20;
-      this.vx = (Math.random() - 0.5) * 0.25;
-      this.vy = -(Math.random() * 0.35 + 0.08);
-      this.r = Math.random() * 2.2 + 0.4;
-      this.alpha = Math.random() * 0.45 + 0.1;
-      this.color = COLORS[Math.floor(Math.random() * COLORS.length)];
-      this.phase = Math.random() * Math.PI * 2;
-      this.freq = Math.random() * 0.007 + 0.003;
-      this.life = 1;
-      this.decay = Math.random() * 0.0025 + 0.0008;
+  btn.addEventListener('click', () => {
+    if (!isFull()) {
+      const el = document.documentElement;
+      (el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen).call(el);
+    } else {
+      (document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen).call(document);
     }
-    update(t) {
-      this.x += this.vx + Math.sin(t * this.freq + this.phase) * 0.12;
-      this.y += this.vy - scrollY * 0.00006 * this.r;
-      this.x += (mouseX - 0.5) * 0.008;
-      this.y += (mouseY - 0.5) * 0.005;
-      this.life -= this.decay;
-      if (this.life <= 0 || this.y < -20) this.reset(false);
-    }
-    draw() {
-      ctx.save();
-      ctx.globalAlpha = this.life * this.alpha;
-      ctx.shadowColor = this.color;
-      ctx.shadowBlur = this.r * 5;
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
-      ctx.fillStyle = this.color;
-      ctx.fill();
-      ctx.restore();
-    }
-  }
-
-  for (let i = 0; i < PCOUNT; i++) particles.push(new Particle());
-
-  // ── Grid ──
-  function drawGrid(t) {
-    const scrollOff = scrollY * 0.05;
-    ctx.save();
-    ctx.strokeStyle = '#4DF0B0';
-    ctx.lineWidth = 0.4;
-    // horizontal
-    for (let i = 0; i < 14; i++) {
-      const y = ((i * H / 13) + scrollOff * (0.5 + i * 0.04)) % H;
-      ctx.globalAlpha = 0.025 + Math.sin(t * 0.0003 + i) * 0.008;
-      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
-    }
-    // vertical
-    for (let i = 0; i < 18; i++) {
-      const x = (i * W / 17) % W;
-      ctx.globalAlpha = 0.018 + Math.cos(t * 0.0002 + i) * 0.006;
-      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
-    }
-    ctx.restore();
-  }
-
-  // ── Radial orbs ──
-  function drawOrbs(t) {
-    const orbDefs = [
-      { bx: 0.65, by: 0.18, r: 0.38, hue: '#4DF0B0', spd: 0.00055, ph: 0 },
-      { bx: 0.08, by: 0.72, r: 0.30, hue: '#7B6EF6', spd: 0.00075, ph: 2.1 },
-      { bx: 0.88, by: 0.78, r: 0.24, hue: '#F06A4D', spd: 0.00045, ph: 4.2 },
-    ];
-    orbDefs.forEach(o => {
-      const ox = o.bx * W + Math.sin(t * o.spd + o.ph) * W * 0.05 + (mouseX - 0.5) * 25 * (1 - o.bx);
-      const oy = o.by * H + Math.cos(t * o.spd * 0.7 + o.ph) * H * 0.05 - scrollY * 0.10 * (1 - o.by) + (mouseY - 0.5) * 18 * (1 - o.by);
-      const rr = o.r * Math.min(W, H);
-      const grad = ctx.createRadialGradient(ox, oy, 0, ox, oy, rr);
-      const hex = o.hue;
-      const rv = parseInt(hex.slice(1,3),16), gv = parseInt(hex.slice(3,5),16), bv = parseInt(hex.slice(5,7),16);
-      grad.addColorStop(0, `rgba(${rv},${gv},${bv},0.16)`);
-      grad.addColorStop(0.5, `rgba(${rv},${gv},${bv},0.05)`);
-      grad.addColorStop(1, `rgba(${rv},${gv},${bv},0)`);
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(ox, oy, rr, 0, Math.PI * 2);
-      ctx.fillStyle = grad;
-      ctx.fill();
-      ctx.restore();
-    });
-  }
-
-  // ── Waves ──
-  function drawWaves(t) {
-    const waveDefs = [
-      { amp: 38, freq: 0.006, spd: 0.28, color: '#4DF0B0', alpha: 0.045, yo: 0.55 },
-      { amp: 24, freq: 0.009, spd: 0.42, color: '#7B6EF6', alpha: 0.050, yo: 0.61 },
-      { amp: 16, freq: 0.013, spd: 0.60, color: '#F06A4D', alpha: 0.030, yo: 0.49 },
-    ];
-    waveDefs.forEach(w => {
-      const baseY = w.yo * H - scrollY * 0.07;
-      ctx.save();
-      ctx.globalAlpha = w.alpha;
-      ctx.strokeStyle = w.color;
-      ctx.lineWidth = 1.2;
-      ctx.shadowColor = w.color;
-      ctx.shadowBlur = 5;
-      ctx.beginPath();
-      for (let x = 0; x <= W; x += 3) {
-        const y = baseY
-          + Math.sin(x * w.freq + t * w.spd * 0.001) * w.amp
-          + Math.sin(x * w.freq * 2.1 + t * w.spd * 0.00085 + 1.2) * w.amp * 0.38;
-        x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-      }
-      ctx.stroke();
-      ctx.restore();
-    });
-  }
-
-  // ── Connections ──
-  function drawConnections() {
-    for (let i = 0; i < particles.length; i++) {
-      for (let j = i + 1; j < particles.length; j++) {
-        const a = particles[i], b = particles[j];
-        const dist = Math.hypot(a.x - b.x, a.y - b.y);
-        if (dist < 95) {
-          const al = (1 - dist / 95) * 0.07 * Math.min(a.life, b.life);
-          ctx.save();
-          ctx.globalAlpha = al;
-          ctx.strokeStyle = '#4DF0B0';
-          ctx.lineWidth = 0.4;
-          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
-          ctx.restore();
-        }
-      }
-    }
-  }
-
-  // ── Loop ──
-  function loop(time) {
-    ctx.clearRect(0, 0, W, H);
-    drawGrid(time);
-    drawOrbs(time);
-    drawWaves(time);
-    particles.forEach(p => p.update(time));
-    drawConnections();
-    particles.forEach(p => p.draw());
-    requestAnimationFrame(loop);
-  }
-  requestAnimationFrame(loop);
+  });
+  document.addEventListener('fullscreenchange', updateIcon);
+  document.addEventListener('webkitfullscreenchange', updateIcon);
 })();
 
-// ─── INIT ON DOM READY ───
+
+// ────────────────────────────────────────────
+// 12. HERO ANIMATIONS (CSS inject)
+// ────────────────────────────────────────────
+if (!document.getElementById('heroStyles')) {
+  const s = document.createElement('style');
+  s.id = 'heroStyles';
+  s.textContent = `
+    @keyframes slideUp  { from{transform:translateY(110%);opacity:0}to{transform:translateY(0);opacity:1} }
+    @keyframes fadeInUp { from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)} }
+    .hero-badge{animation:fadeInUp .6s ease .08s both}
+    .hero h1 .line{overflow:hidden}
+    .hero h1 .line:nth-child(1) span{display:block;animation:slideUp .88s cubic-bezier(.4,0,.2,1) .18s both}
+    .hero h1 .line:nth-child(2) span{display:block;animation:slideUp .88s cubic-bezier(.4,0,.2,1) .34s both}
+    .hero p{animation:fadeInUp .6s ease .52s both}
+    .hero-buttons{animation:fadeInUp .6s ease .66s both}
+  `;
+  document.head.appendChild(s);
+}
+
+
+// ────────────────────────────────────────────
+// 13. INIT ON DOM READY
+// ────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+  // Apply background image from content.js
+  applyBackground();
+
+  // Translations
   applyTranslations();
   updateLangButtons();
+  updateThemeButtons();
+
+  // Render dynamic content from content.js
+  renderDynamicContent();
+
+  // Language button clicks
   document.querySelectorAll('.lang-btn').forEach(btn => {
     btn.addEventListener('click', () => setLang(btn.dataset.lang));
   });
+
+  // Theme toggle clicks
+  document.querySelectorAll('.theme-toggle').forEach(btn => {
+    btn.addEventListener('click', toggleTheme);
+  });
+
+  // Gallery close
+  const galleryOverlay = document.getElementById('galleryOverlay');
+  if (galleryOverlay) {
+    galleryOverlay.addEventListener('click', e => { if (e.target === galleryOverlay) closeGallery(); });
+    document.getElementById('galleryCloseBtn')?.addEventListener('click', closeGallery);
+    document.getElementById('galleryPrevBtn')?.addEventListener('click', () => setGalleryPhoto(galleryCurrentPhoto - 1));
+    document.getElementById('galleryNextBtn')?.addEventListener('click', () => setGalleryPhoto(galleryCurrentPhoto + 1));
+  }
+
+  // Video player close
+  document.getElementById('videoPlayerClose')?.addEventListener('click', closeVideoPlayer);
+  document.getElementById('videoPlayerOverlay')?.addEventListener('click', e => {
+    if (e.target === document.getElementById('videoPlayerOverlay')) closeVideoPlayer();
+  });
 });
+
+// ═══════════════════════════════════════════════
+// ВИДЕОПЛЕЕР — модальное окно
+// ═══════════════════════════════════════════════
+function openVideoPlayer(url) {
+  const overlay = document.getElementById('videoPlayerOverlay');
+  const iframe  = document.getElementById('videoIframe');
+  if (!overlay || !iframe) return;
+
+  // Конвертируем обычную ссылку YouTube в embed
+  let embedUrl = url
+    .replace('watch?v=', 'embed/')
+    .replace('youtu.be/', 'www.youtube.com/embed/')
+    .replace('https://youtube.com/', 'https://www.youtube.com/')
+    + '?autoplay=1&rel=0';
+
+  iframe.src = embedUrl;
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeVideoPlayer() {
+  const overlay = document.getElementById('videoPlayerOverlay');
+  const iframe  = document.getElementById('videoIframe');
+  if (overlay) overlay.classList.remove('open');
+  if (iframe)  iframe.src = ''; // останавливает видео
+  document.body.style.overflow = '';
+}
+
+// Video player close wired in main DOMContentLoaded below
+
+// ═══════════════════════════════════════════════
+// РЕНДЕР МЕРОПРИЯТИЙ (program.html)
+// ═══════════════════════════════════════════════
+function renderEvents() {
+  const grid = document.getElementById('eventsGrid');
+  if (!grid || typeof SITE_CONTENT === 'undefined' || !SITE_CONTENT.events) return;
+
+  grid.innerHTML = SITE_CONTENT.events.map((ev, i) => {
+    const date  = ev[`date${cap(currentLang)}`]  || ev.dateRu;
+    const title = ev[`title${cap(currentLang)}`] || ev.titleRu;
+    const text  = ev[`text${cap(currentLang)}`]  || ev.textRu;
+    const viewLabel = { ru: 'Смотреть →', kz: 'Қарау →', en: 'View →' };
+    const photoCount = ev.photos?.length || 0;
+    const videoCount = ev.videos?.length || 0;
+    const delay = i > 0 ? ` reveal-delay-${Math.min(i, 4)}` : '';
+    const meta = [];
+    if (photoCount) meta.push(`📷 ${photoCount}`);
+    if (videoCount) meta.push(`🎬 ${videoCount}`);
+
+    return `
+    <div class="news-card reveal${delay}" style="cursor:pointer" data-event-index="${i}">
+      <div class="news-img">${ev.emoji}</div>
+      <div class="news-body">
+        <div class="news-date">${date}${meta.length ? ' · ' + meta.join(' · ') : ''}</div>
+        <h3>${title}</h3>
+        <p>${text.substring(0, 120)}…</p>
+        <div class="news-read-more">
+          <span>${viewLabel[currentLang] || viewLabel.ru}</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  grid.querySelectorAll('[data-event-index]').forEach(card => {
+    card.addEventListener('click', () => openEventModal(parseInt(card.dataset.eventIndex)));
+  });
+  grid.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+}
+
+// Открыть модал мероприятия (photos + videos)
+function openEventModal(idx) {
+  const event = SITE_CONTENT.events[idx];
+  if (!event) return;
+  galleryCurrentEvent = event;
+  galleryCurrentEvent._type = 'event';
+  galleryCurrentPhoto = 0;
+
+  const overlay = document.getElementById('galleryOverlay');
+  if (!overlay) return;
+
+  document.getElementById('galleryDate').textContent  = event[`date${cap(currentLang)}`]  || event.dateRu;
+  document.getElementById('galleryTitle').textContent = event[`title${cap(currentLang)}`] || event.titleRu;
+  document.getElementById('galleryText').textContent  = event[`text${cap(currentLang)}`]  || event.textRu;
+
+  // Если есть видео — показываем раздел видео
+  const videoSection = document.getElementById('galleryVideos');
+  if (videoSection) {
+    if (event.videos && event.videos.length > 0) {
+      const playLabel = { ru: 'Смотреть видео', kz: 'Бейнені қарау', en: 'Watch video' };
+      videoSection.innerHTML = `
+        <div style="margin-top:18px;border-top:1px solid var(--border);padding-top:16px">
+          <p style="font-size:.78rem;font-weight:700;color:var(--text-muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;">
+            🎬 ${{ ru:'Видео', kz:'Бейнелер', en:'Videos' }[currentLang]}
+          </p>
+          <div style="display:flex;flex-wrap:wrap;gap:9px">
+            ${event.videos.map((v, vi) => `
+              <button class="btn btn-outline" style="font-size:.8rem;padding:8px 16px" onclick="openVideoPlayer('${v}')">
+                ▶ ${playLabel[currentLang]} ${event.videos.length > 1 ? vi + 1 : ''}
+              </button>`).join('')}
+          </div>
+        </div>`;
+      videoSection.style.display = 'block';
+    } else {
+      videoSection.innerHTML = '';
+      videoSection.style.display = 'none';
+    }
+  }
+
+  // Миниатюры фото
+  const thumbs = document.getElementById('galleryThumbs');
+  if (thumbs && event.photos && event.photos.length > 0) {
+    thumbs.innerHTML = event.photos.map((src, i) =>
+      `<div class="gallery-thumb${i === 0 ? ' active' : ''}" data-index="${i}">
+         <img src="${src}" alt="" loading="lazy">
+       </div>`).join('');
+    thumbs.querySelectorAll('.gallery-thumb').forEach(th => {
+      th.addEventListener('click', () => setGalleryPhoto(parseInt(th.dataset.index)));
+    });
+    showGalleryPhoto(0);
+    document.getElementById('galleryPhotoSection').style.display = 'block';
+  } else {
+    document.getElementById('galleryPhotoSection').style.display = 'none';
+  }
+
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+// ═══════════════════════════════════════════════
+// РЕНДЕР ИИ-ИНСТРУМЕНТОВ (extras.html)
+// ═══════════════════════════════════════════════
+function renderAiTools() {
+  const grid = document.getElementById('aiToolsGrid');
+  if (!grid || typeof SITE_CONTENT === 'undefined' || !SITE_CONTENT.aiTools) return;
+
+  const freeLabel = { ru: 'Бесплатно', kz: 'Тегін', en: 'Free' };
+  const paidLabel = { ru: 'Платный',   kz: 'Ақылы', en: 'Paid' };
+  const openLabel = { ru: 'Открыть',   kz: 'Ашу',   en: 'Open' };
+
+  // Categories derived from tool name/tags for filtering
+  const cats = (tool) => {
+    const cats = [];
+    const n = tool.name.toLowerCase(), tagE = (tool.tagEn || '').toLowerCase();
+    if (['chatgpt','claude','grok','deepseek','perplexity'].includes(n) || tagE.includes('text')) cats.push('text');
+    if (tagE.includes('code') || tagE.includes('ide') || n === 'github copilot' || n === 'bolt.new') cats.push('code');
+    if (tagE.includes('image') || tagE.includes('art') || tagE.includes('design')) cats.push('image');
+    if (tagE.includes('video') || tagE.includes('animation')) cats.push('video');
+    return cats.join(',');
+  };
+
+  grid.innerHTML = SITE_CONTENT.aiTools.map((tool, i) => {
+    const desc  = tool[`desc${cap(currentLang)}`] || tool.descRu;
+    const tag   = tool[`tag${cap(currentLang)}`]  || tool.tagRu;
+    const delay = (i % 4) > 0 ? ` reveal-delay-${i % 4}` : '';
+    const toolCats = cats(tool);
+
+    return `
+    <div class="ai-tool-card reveal${delay}" data-free="${tool.free}" data-cats="${toolCats}">
+      <div class="ai-tool-header">
+        <div class="ai-tool-icon" style="background:${tool.color}22;border:1.5px solid ${tool.color}44">
+          <span style="font-size:1.6rem">${tool.emoji}</span>
+        </div>
+        <div>
+          <div class="ai-tool-name">${tool.name}</div>
+          <div class="ai-tool-company">${tool.company}</div>
+        </div>
+        <span class="ai-tool-badge" style="${tool.free
+          ? 'background:rgba(16,163,127,0.10);color:#10A37F;border-color:rgba(16,163,127,0.22)'
+          : 'background:rgba(107,77,230,0.10);color:var(--violet);border-color:rgba(107,77,230,0.22)'}">
+          ${tool.free ? freeLabel[currentLang] : paidLabel[currentLang]}
+        </span>
+      </div>
+      <p class="ai-tool-desc">${desc}</p>
+      <div class="ai-tool-footer">
+        <span class="ai-tool-tags">${tag}</span>
+        <a href="${tool.url}" target="_blank" rel="noopener" class="btn btn-primary" style="font-size:.78rem;padding:7px 14px">
+          ${openLabel[currentLang]} ↗
+        </a>
+      </div>
+    </div>`;
+  }).join('');
+
+  grid.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+}

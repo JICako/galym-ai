@@ -1,28 +1,84 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GALYM AI — Контакты</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<canvas id="bgCanvas"></canvas>
+<div class="site-bg"></div>
+<div class="site-bg-overlay"></div>
+
+<!-- VIDEO PLAYER MODAL -->
+<div class="video-player-overlay" id="videoPlayerOverlay">
+  <div class="video-player-modal">
+    <div class="video-player-top">
+      <span id="videoPlayerTitle">GALYM AI — видео</span>
+      <button class="video-player-close" id="videoPlayerClose">✕</button>
+    </div>
+    <div class="video-player-frame">
+      <iframe id="videoIframe" src="" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe>
+    </div>
+  </div>
+</div>
+
+<!-- GALLERY MODAL (news + events) -->
+<div class="gallery-overlay" id="galleryOverlay">
+  <div class="gallery-modal">
+    <div class="gallery-header">
+      <div class="gallery-header-text">
+        <div class="gallery-date" id="galleryDate"></div>
+        <h2 id="galleryTitle"></h2>
+        <p id="galleryText"></p>
+      </div>
+      <button class="gallery-close" id="galleryCloseBtn">✕</button>
+    </div>
+    <div class="gallery-body">
+      <!-- video buttons section -->
+      <div id="galleryVideos"></div>
+      <!-- photo section -->
+      <div id="galleryPhotoSection">
+        <div class="gallery-main-photo">
+          <img id="galleryMainImg" src="" alt="">
+        </div>
+        <div class="gallery-nav">
+          <button class="gallery-nav-btn" id="galleryPrevBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <span class="gallery-count" id="galleryCount"></span>
+          <button class="gallery-nav-btn" id="galleryNextBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+        <div class="gallery-thumbs" id="galleryThumbs"></div>
+      </div>
+    </div>
+  </div>
+</div>
 <header>
   <div class="header-inner">
-    <a href="index.html" class="logo"><span class="logo-dot"></span>GALYM<span>AI</span></a>
+    <a href="index.html" class="logo">
+      <img src="logo.jpg" alt="GALYM AI" class="logo-img">
+      <span class="logo-text">GALYM<span>AI</span></span>
+    </a>
     <nav>
-      <a href="index.html" data-i18n="nav_home">Главная</a>
-      <a href="about.html" data-i18n="nav_about">О нас</a>
-      <a href="courses.html" data-i18n="nav_courses">Курсы</a>
-      <a href="program.html" data-i18n="nav_program">Программа</a>
+      <a href="index.html"    data-i18n="nav_home">Главная</a>
+      <a href="about.html"    data-i18n="nav_about">О нас</a>
+      <a href="courses.html"  data-i18n="nav_courses">Курсы</a>
+      <a href="program.html"  data-i18n="nav_program">Программа</a>
       <a href="teachers.html" data-i18n="nav_teachers">Преподаватели</a>
-      <a href="news.html" data-i18n="nav_news">Новости</a>
+      <a href="news.html"     data-i18n="nav_news">Новости</a>
+      <a href="extras.html"   data-i18n="nav_extras">Дополнительное</a>
       <a href="contacts.html" data-i18n="nav_contacts">Контакты</a>
       <a href="feedback.html" data-i18n="nav_feedback">Обратная связь</a>
     </nav>
-    <div style="display:flex;align-items:center;gap:12px;" class="header-lang">
+    <div class="header-controls">
+      <span class="theme-icon theme-icon-sun" style="cursor:pointer" title="Светлая тема">☀️</span>
+      <button class="theme-toggle" aria-label="Переключить тему"></button>
+      <span class="theme-icon theme-icon-moon" style="cursor:pointer" title="Тёмная тема">🌙</span>
       <div class="lang-switcher">
         <button class="lang-btn" data-lang="ru">RU</button>
         <button class="lang-btn" data-lang="kz">KZ</button>
@@ -33,26 +89,37 @@
     <button class="burger" aria-label="Меню"><span></span><span></span><span></span></button>
   </div>
 </header>
+
 <div class="mobile-nav">
-  <a href="index.html" data-i18n="nav_home">Главная</a>
-  <a href="about.html" data-i18n="nav_about">О нас</a>
-  <a href="courses.html" data-i18n="nav_courses">Курсы</a>
-  <a href="program.html" data-i18n="nav_program">Программа</a>
+  <a href="index.html"    data-i18n="nav_home">Главная</a>
+  <a href="about.html"    data-i18n="nav_about">О нас</a>
+  <a href="courses.html"  data-i18n="nav_courses">Курсы</a>
+  <a href="program.html"  data-i18n="nav_program">Программа</a>
   <a href="teachers.html" data-i18n="nav_teachers">Преподаватели</a>
-  <a href="news.html" data-i18n="nav_news">Новости</a>
+  <a href="news.html"     data-i18n="nav_news">Новости</a>
+  <a href="extras.html"   data-i18n="nav_extras">Дополнительное</a>
   <a href="contacts.html" data-i18n="nav_contacts">Контакты</a>
   <a href="feedback.html" data-i18n="nav_feedback">Обратная связь</a>
+  <div class="mobile-nav-bottom">
+    <span class="theme-icon theme-icon-sun">☀️</span>
+    <button class="theme-toggle"></button>
+    <span class="theme-icon theme-icon-moon">🌙</span>
+    <div class="lang-switcher">
+      <button class="lang-btn" data-lang="ru">RU</button>
+      <button class="lang-btn" data-lang="kz">KZ</button>
+      <button class="lang-btn" data-lang="en">EN</button>
+    </div>
+  </div>
 </div>
 
 <div class="page-hero">
   <div class="page-hero-bg"></div>
-  <div class="container" style="position:relative;">
+  <div class="container" style="position:relative">
     <div class="section-label" data-i18n="cont_label">Свяжитесь с нами</div>
-    <h1><span data-i18n="cont_h1">Контакты GALYM AI</span></h1>
+    <h1 data-i18n="cont_h1">Контакты GALYM AI</h1>
     <p data-i18n="cont_p">Мы всегда рады ответить на ваши вопросы.</p>
   </div>
 </div>
-
 <section>
   <div class="container">
     <div class="contacts-grid">
@@ -63,15 +130,15 @@
         </div>
         <div class="contact-item reveal reveal-delay-1">
           <div class="contact-icon">📧</div>
-          <div><h4 data-i18n="cont_email_h">Email</h4><p><a href="mailto:info@galym-ai.kz" style="color:var(--accent);text-decoration:none;">info@galym-ai.kz</a></p></div>
+          <div><h4 data-i18n="cont_email_h">Email</h4><p><a href="mailto:info@galym-ai.kz" style="color:var(--blue);text-decoration:none">info@galym-ai.kz</a></p></div>
         </div>
         <div class="contact-item reveal reveal-delay-2">
           <div class="contact-icon">📞</div>
-          <div><h4 data-i18n="cont_phone_h">Телефон</h4><p><a href="tel:+77001234567" style="color:var(--accent);text-decoration:none;">+7 700 123 45 67</a></p></div>
+          <div><h4 data-i18n="cont_phone_h">Телефон</h4><p><a href="tel:+77001234567" style="color:var(--blue);text-decoration:none">+7 700 123 45 67</a></p></div>
         </div>
         <div class="contact-item reveal reveal-delay-3">
           <div class="contact-icon">🕐</div>
-          <div><h4 data-i18n="cont_hours_h">Часы работы</h4><p data-i18n-html="cont_hours_v">Пн–Пт: 9:00 – 20:00</p></div>
+          <div><h4 data-i18n="cont_hours_h">Часы работы</h4><p data-i18n="cont_hours_v">Пн–Пт: 9:00–20:00</p></div>
         </div>
       </div>
       <div class="reveal reveal-delay-1">
@@ -82,27 +149,50 @@
     </div>
   </div>
 </section>
-
-<section style="padding-top:0;">
+<section style="padding-top:0">
   <div class="container">
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:48px;text-align:center;" class="reveal">
-      <h3 style="margin-bottom:12px;" data-i18n="cont_cta_h">Есть вопросы?</h3>
-      <p style="color:var(--text-muted);margin-bottom:28px;" data-i18n="cont_cta_p">Заполните форму обратной связи и мы ответим в течение 24 часов.</p>
+    <div class="cta-block reveal" style="text-align:center">
+      <h3 style="margin-bottom:10px" data-i18n="cont_cta_h">Есть вопросы?</h3>
+      <p style="color:var(--text-muted);margin-bottom:24px" data-i18n="cont_cta_p">Заполните форму обратной связи.</p>
       <a href="feedback.html" class="btn btn-primary btn-large" data-i18n="cont_cta_btn">Написать нам</a>
     </div>
   </div>
 </section>
-
 <footer>
   <div class="container">
     <div class="footer-inner">
-      <div class="footer-brand"><a href="index.html" class="logo"><span class="logo-dot"></span>GALYM<span>AI</span></a><p data-i18n="footer_desc">Образовательный клуб нового поколения.</p></div>
-      <div class="footer-col"><h4 data-i18n="footer_nav">Навигация</h4><a href="about.html" data-i18n="nav_about">О нас</a><a href="courses.html" data-i18n="nav_courses">Курсы</a><a href="program.html" data-i18n="nav_program">Программа</a><a href="teachers.html" data-i18n="nav_teachers">Преподаватели</a></div>
-      <div class="footer-col"><h4 data-i18n="footer_contacts">Контакты</h4><a href="contacts.html">г. Актобе</a><a href="mailto:info@galym-ai.kz">info@galym-ai.kz</a><a href="tel:+77001234567">+7 700 123 45 67</a><a href="feedback.html" data-i18n="nav_feedback">Обратная связь</a></div>
+      <div class="footer-brand">
+        <a href="index.html" class="logo">
+          <img src="logo.jpg" alt="GALYM AI" class="logo-img">
+          <span class="logo-text">GALYM<span>AI</span></span>
+        </a>
+        <p data-i18n="footer_desc">Образовательный клуб нового поколения в Актобе.</p>
+      </div>
+      <div class="footer-col">
+        <h4 data-i18n="footer_nav">Навигация</h4>
+        <a href="about.html"    data-i18n="nav_about">О нас</a>
+        <a href="courses.html"  data-i18n="nav_courses">Курсы</a>
+        <a href="program.html"  data-i18n="nav_program">Программа</a>
+        <a href="teachers.html" data-i18n="nav_teachers">Преподаватели</a>
+        <a href="news.html"     data-i18n="nav_news">Новости</a>
+        <a href="extras.html"   data-i18n="nav_extras">Дополнительное</a>
+      </div>
+      <div class="footer-col">
+        <h4 data-i18n="footer_contacts">Контакты</h4>
+        <a href="contacts.html" data-i18n="cont_addr_h">Адрес</a>
+        <a href="mailto:info@galym-ai.kz">info@galym-ai.kz</a>
+        <a href="tel:+77001234567">+7 700 123 45 67</a>
+        <a href="feedback.html" data-i18n="nav_feedback">Обратная связь</a>
+      </div>
     </div>
-    <div class="footer-bottom"><span data-i18n="footer_rights">© 2024 GALYM AI.</span><span data-i18n="footer_city">Актобе, Казахстан</span></div>
+    <div class="footer-bottom">
+      <span data-i18n="footer_rights">© 2024 GALYM AI. Все права защищены.</span>
+      <span data-i18n="footer_city">Актобе, Казахстан</span>
+    </div>
   </div>
 </footer>
+<button id="fullscreenBtn" class="fullscreen-btn" aria-label="Полный экран"></button>
+<script src="js/content.js"></script>
 <script src="js/i18n.js"></script>
 <script src="js/script.js"></script>
 </body>
