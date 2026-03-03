@@ -7,8 +7,83 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="css/style.css">
+  <style>
+    #passwordGate {
+      position: fixed; inset: 0; z-index: 9999;
+      display: flex; align-items: center; justify-content: center; padding: 20px;
+      background: var(--bg-overlay, rgba(235,241,255,0.97));
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    }
+    #passwordGate.hidden { display: none; }
+    .pw-box {
+      background: var(--surface, rgba(255,255,255,0.96));
+      border: 1.5px solid var(--border, rgba(30,107,230,0.15));
+      border-radius: 22px; padding: 44px 40px; text-align: center;
+      max-width: 420px; width: 100%;
+      box-shadow: 0 24px 80px rgba(30,107,230,0.18);
+    }
+    .pw-logo { display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:28px; }
+    .pw-logo img { width:44px; height:44px; border-radius:11px; object-fit:cover; box-shadow:0 2px 12px rgba(30,107,230,0.22); }
+    .pw-logo-text { font-family:'Syne',sans-serif; font-size:1.5rem; font-weight:800; letter-spacing:-0.03em; background:linear-gradient(135deg,#1E6BE6,#6B4DE6); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .pw-icon { font-size:2.8rem; margin-bottom:14px; }
+    .pw-box h2 { font-family:'Syne',sans-serif; font-size:1.35rem; font-weight:700; color:var(--text,#0F1A3E); margin-bottom:8px; }
+    .pw-box p { color:var(--text-muted,#5A6A8A); font-size:0.875rem; margin-bottom:26px; line-height:1.55; }
+    .pw-field { position:relative; margin-bottom:14px; }
+    .pw-field input {
+      width:100%; background:var(--input-bg,rgba(240,244,255,0.8)); border:1.5px solid var(--border,rgba(30,107,230,0.13));
+      border-radius:12px; padding:13px 46px 13px 18px; font-size:1rem; font-family:'DM Sans',sans-serif;
+      color:var(--text,#0F1A3E); outline:none; transition:border-color .25s,box-shadow .25s;
+      text-align:center; letter-spacing:0.12em; box-sizing:border-box;
+    }
+    .pw-field input:focus { border-color:#1E6BE6; box-shadow:0 0 0 3px rgba(30,107,230,0.10); }
+    .pw-eye {
+      position:absolute; right:12px; top:50%; transform:translateY(-50%);
+      background:none; border:none; cursor:pointer; color:var(--text-muted,#5A6A8A);
+      font-size:1.1rem; padding:4px; transition:color .2s;
+    }
+    .pw-eye:hover { color:#1E6BE6; }
+    .pw-error { color:#DC2626; font-size:.8rem; margin-bottom:12px; min-height:18px; opacity:0; transition:opacity .2s; }
+    .pw-error.show { opacity:1; }
+    .pw-btn {
+      width:100%; padding:13px; background:linear-gradient(135deg,#1E6BE6,#6B4DE6);
+      color:#fff; border:none; border-radius:12px; font-family:'DM Sans',sans-serif;
+      font-size:.95rem; font-weight:700; cursor:pointer; transition:all .25s;
+      box-shadow:0 4px 16px rgba(30,107,230,0.30);
+    }
+    .pw-btn:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(30,107,230,0.38); }
+    .pw-hint { margin-top:18px; font-size:.74rem; color:var(--text-light,#8A9ABF); }
+    @keyframes shake {
+      0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)}
+      40%{transform:translateX(8px)} 60%{transform:translateX(-6px)} 80%{transform:translateX(6px)}
+    }
+    .pw-box.shake { animation:shake .4s ease; }
+  </style>
 </head>
 <body>
+
+<!-- ═══ PASSWORD GATE ═══ -->
+<div id="passwordGate">
+  <div class="pw-box" id="pwBox">
+    <div class="pw-logo">
+      <img src="logo.jpg" alt="GALYM AI">
+      <span class="pw-logo-text">GALYM AI</span>
+    </div>
+    <div class="pw-icon">🔐</div>
+    <h2>Закрытый раздел</h2>
+    <p>Эта страница доступна только администраторам.<br>Введите пароль для входа.</p>
+    <div class="pw-field">
+      <input type="password" id="pwInput" placeholder="• • • • • • • • •" autocomplete="off" autofocus>
+      <button class="pw-eye" id="pwEye" onclick="togglePwVis()" tabindex="-1">👁</button>
+    </div>
+    <div class="pw-error" id="pwError">Неверный пароль. Попробуйте ещё раз.</div>
+    <button class="pw-btn" onclick="checkPw()">Войти →</button>
+    <p class="pw-hint">Только для сотрудников GALYM AI</p>
+  </div>
+</div>
+
+<!-- ═══ MAIN CONTENT ═══ -->
+<div id="mainContent" style="display:none">
+
 <div class="site-bg"></div>
 <div class="site-bg-overlay"></div>
 
@@ -16,7 +91,7 @@
 <div class="video-player-overlay" id="videoPlayerOverlay">
   <div class="video-player-modal">
     <div class="video-player-top">
-      <span id="videoPlayerTitle">GALYM AI — видео</span>
+      <span>GALYM AI — видео</span>
       <button class="video-player-close" id="videoPlayerClose">✕</button>
     </div>
     <div class="video-player-frame">
@@ -25,7 +100,7 @@
   </div>
 </div>
 
-<!-- GALLERY MODAL (news + events) -->
+<!-- GALLERY MODAL -->
 <div class="gallery-overlay" id="galleryOverlay">
   <div class="gallery-modal">
     <div class="gallery-header">
@@ -37,27 +112,20 @@
       <button class="gallery-close" id="galleryCloseBtn">✕</button>
     </div>
     <div class="gallery-body">
-      <!-- video buttons section -->
       <div id="galleryVideos"></div>
-      <!-- photo section -->
       <div id="galleryPhotoSection">
-        <div class="gallery-main-photo">
-          <img id="galleryMainImg" src="" alt="">
-        </div>
+        <div class="gallery-main-photo"><img id="galleryMainImg" src="" alt=""></div>
         <div class="gallery-nav">
-          <button class="gallery-nav-btn" id="galleryPrevBtn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-          </button>
+          <button class="gallery-nav-btn" id="galleryPrevBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
           <span class="gallery-count" id="galleryCount"></span>
-          <button class="gallery-nav-btn" id="galleryNextBtn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-          </button>
+          <button class="gallery-nav-btn" id="galleryNextBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
         </div>
         <div class="gallery-thumbs" id="galleryThumbs"></div>
       </div>
     </div>
   </div>
 </div>
+
 <header>
   <div class="header-inner">
     <a href="index.html" class="logo">
@@ -71,20 +139,19 @@
       <a href="program.html"  data-i18n="nav_program">Программа</a>
       <a href="teachers.html" data-i18n="nav_teachers">Преподаватели</a>
       <a href="news.html"     data-i18n="nav_news">Новости</a>
-      <a href="extras.html"   data-i18n="nav_extras">Дополнительное</a>
+      <a href="extras.html"   style="color:var(--blue);font-weight:700">🔐 ЖИ-база</a>
       <a href="contacts.html" data-i18n="nav_contacts">Контакты</a>
       <a href="feedback.html" data-i18n="nav_feedback">Обратная связь</a>
     </nav>
     <div class="header-controls">
-      <span class="theme-icon theme-icon-sun" style="cursor:pointer" title="Светлая тема">☀️</span>
-      <button class="theme-toggle" aria-label="Переключить тему"></button>
-      <span class="theme-icon theme-icon-moon" style="cursor:pointer" title="Тёмная тема">🌙</span>
+      <span class="theme-icon theme-icon-sun">☀️</span>
+      <button class="theme-toggle" aria-label="Тема"></button>
+      <span class="theme-icon theme-icon-moon">🌙</span>
       <div class="lang-switcher">
         <button class="lang-btn" data-lang="ru">RU</button>
         <button class="lang-btn" data-lang="kz">KZ</button>
         <button class="lang-btn" data-lang="en">EN</button>
       </div>
-      <a href="courses.html" class="btn btn-primary header-cta" data-i18n="nav_enroll">Записаться</a>
     </div>
     <button class="burger" aria-label="Меню"><span></span><span></span><span></span></button>
   </div>
@@ -97,9 +164,7 @@
   <a href="program.html"  data-i18n="nav_program">Программа</a>
   <a href="teachers.html" data-i18n="nav_teachers">Преподаватели</a>
   <a href="news.html"     data-i18n="nav_news">Новости</a>
-  <a href="extras.html"   data-i18n="nav_extras">Дополнительное</a>
   <a href="contacts.html" data-i18n="nav_contacts">Контакты</a>
-  <a href="feedback.html" data-i18n="nav_feedback">Обратная связь</a>
   <div class="mobile-nav-bottom">
     <span class="theme-icon theme-icon-sun">☀️</span>
     <button class="theme-toggle"></button>
@@ -115,31 +180,30 @@
 <div class="page-hero">
   <div class="page-hero-bg"></div>
   <div class="container" style="position:relative">
-    <div class="section-label" data-i18n="extras_label">Полезные инструменты</div>
-    <h1 data-i18n="extras_h1">Дополнительное</h1>
-    <p data-i18n="extras_p">Лучшие ИИ-инструменты для учёбы, творчества и работы — собраны в одном месте.</p>
+    <div class="section-label">🔐 Администратор</div>
+    <h1>ЖИ-инструменттер <span class="text-accent">педагогтарға</span></h1>
+    <p>Оқыту, бағалау және шығармашылыққа арналған ЖИ-инструменттердің толық жинағы</p>
   </div>
 </div>
 
 <section>
   <div class="container">
-    <div class="section-label reveal" data-i18n="ai_tools_label">ИИ-инструменты</div>
-    <h2 class="reveal" style="margin-bottom:10px" data-i18n="ai_tools_h">15 лучших ИИ прямо сейчас</h2>
-    <p class="reveal" style="color:var(--text-muted);margin-bottom:28px;max-width:600px" data-i18n="ai_tools_p">Нажмите «Открыть» чтобы перейти к инструменту. Все ссылки ведут на официальные сайты.</p>
-
     <!-- Filter tabs -->
     <div class="filter-tabs reveal">
-      <button class="filter-tab active" data-filter="all" data-i18n="filter_all">Все</button>
-      <button class="filter-tab" data-filter="free" data-i18n="filter_free">Бесплатные</button>
-      <button class="filter-tab" data-filter="paid" data-i18n="filter_paid">Платные</button>
-      <button class="filter-tab" data-filter="text" data-i18n="filter_text">Текст и чат</button>
-      <button class="filter-tab" data-filter="image" data-i18n="filter_image">Изображения</button>
-      <button class="filter-tab" data-filter="video" data-i18n="filter_video">Видео</button>
-      <button class="filter-tab" data-filter="code" data-i18n="filter_code">Код</button>
+      <button class="filter-tab active" data-filter="all">Барлығы / Все</button>
+      <button class="filter-tab" data-filter="text">💬 Чат / Мәтін</button>
+      <button class="filter-tab" data-filter="edu">🏫 Білім беру</button>
+      <button class="filter-tab" data-filter="assess">📊 Бағалау</button>
+      <button class="filter-tab" data-filter="feedback">⭐ Кері байланыс</button>
+      <button class="filter-tab" data-filter="image">🎨 Суреттер</button>
+      <button class="filter-tab" data-filter="video">🎬 Бейне / Дауыс</button>
+      <button class="filter-tab" data-filter="code">💻 Код</button>
+      <button class="filter-tab" data-filter="interactive">🎮 Интерактив</button>
+      <button class="filter-tab" data-filter="free">✅ Тегін / Бесплатные</button>
     </div>
 
     <div class="ai-tools-grid" id="aiToolsGrid">
-      <!-- Заполняется из js/content.js -->
+      <!-- filled by script.js renderAiTools() -->
     </div>
   </div>
 </section>
@@ -147,38 +211,14 @@
 <section style="padding-top:0">
   <div class="container">
     <div class="cta-block reveal" style="text-align:center">
-      <div class="section-label" style="justify-content:center">🎓</div>
-      <h2 style="margin-bottom:14px" data-i18n="extras_cta_h">Хочешь научиться работать с ИИ?</h2>
-      <p style="color:var(--text-muted);max-width:460px;margin:0 auto 28px" data-i18n="extras_cta_p">На курсе «Искусственный интеллект» мы разберём все эти инструменты изнутри.</p>
-      <a href="courses.html" class="btn btn-primary btn-large" data-i18n="cta_btn">Смотреть курсы</a>
+      <div class="section-label" style="justify-content:center">📚</div>
+      <h2 style="margin-bottom:14px">Хочешь научиться работать с ИИ?</h2>
+      <p style="color:var(--text-muted);max-width:460px;margin:0 auto 28px">На курсе «Искусственный интеллект» мы разберём все эти инструменты изнутри.</p>
+      <a href="courses.html" class="btn btn-primary btn-large">Смотреть курсы</a>
     </div>
   </div>
 </section>
 
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('.filter-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      filterAiTools(tab.dataset.filter);
-    });
-  });
-});
-
-function filterAiTools(filter) {
-  const cards = document.querySelectorAll('.ai-tool-card');
-  cards.forEach(card => {
-    if (filter === 'all') { card.style.display = ''; return; }
-    const isFree  = card.dataset.free === 'true';
-    const cats    = (card.dataset.cats || '').split(',');
-    if (filter === 'free' && isFree)        { card.style.display = ''; return; }
-    if (filter === 'paid' && !isFree)       { card.style.display = ''; return; }
-    if (cats.includes(filter))              { card.style.display = ''; return; }
-    card.style.display = 'none';
-  });
-}
-</script>
 <footer>
   <div class="container">
     <div class="footer-inner">
@@ -191,19 +231,15 @@ function filterAiTools(filter) {
       </div>
       <div class="footer-col">
         <h4 data-i18n="footer_nav">Навигация</h4>
-        <a href="about.html"    data-i18n="nav_about">О нас</a>
-        <a href="courses.html"  data-i18n="nav_courses">Курсы</a>
-        <a href="program.html"  data-i18n="nav_program">Программа</a>
-        <a href="teachers.html" data-i18n="nav_teachers">Преподаватели</a>
-        <a href="news.html"     data-i18n="nav_news">Новости</a>
-        <a href="extras.html"   data-i18n="nav_extras">Дополнительное</a>
+        <a href="about.html" data-i18n="nav_about">О нас</a>
+        <a href="courses.html" data-i18n="nav_courses">Курсы</a>
+        <a href="news.html" data-i18n="nav_news">Новости</a>
+        <a href="contacts.html" data-i18n="nav_contacts">Контакты</a>
       </div>
       <div class="footer-col">
         <h4 data-i18n="footer_contacts">Контакты</h4>
-        <a href="contacts.html" data-i18n="cont_addr_h">Адрес</a>
         <a href="mailto:info@galym-ai.kz">info@galym-ai.kz</a>
         <a href="tel:+77001234567">+7 700 123 45 67</a>
-        <a href="feedback.html" data-i18n="nav_feedback">Обратная связь</a>
       </div>
     </div>
     <div class="footer-bottom">
@@ -212,9 +248,72 @@ function filterAiTools(filter) {
     </div>
   </div>
 </footer>
+
 <button id="fullscreenBtn" class="fullscreen-btn" aria-label="Полный экран"></button>
+
+</div><!-- /#mainContent -->
+
 <script src="js/content.js"></script>
 <script src="js/i18n.js"></script>
 <script src="js/script.js"></script>
+<script>
+// ─── PASSWORD GATE ───────────────────────────────────────
+(function() {
+  const PASS = atob('YWRtaW4xMjM='); // admin123
+  const SK   = 'galym_admin_v1';
+
+  if (sessionStorage.getItem(SK) === '1') { unlock(); return; }
+
+  function unlock() {
+    document.getElementById('passwordGate').classList.add('hidden');
+    document.getElementById('mainContent').style.display = 'block';
+    sessionStorage.setItem(SK, '1');
+  }
+
+  window.checkPw = function() {
+    const val = document.getElementById('pwInput').value;
+    const err = document.getElementById('pwError');
+    if (val === PASS) {
+      err.classList.remove('show');
+      unlock();
+    } else {
+      err.classList.add('show');
+      const box = document.getElementById('pwBox');
+      box.classList.remove('shake');
+      void box.offsetWidth;
+      box.classList.add('shake');
+      document.getElementById('pwInput').value = '';
+      document.getElementById('pwInput').focus();
+    }
+  };
+
+  window.togglePwVis = function() {
+    const inp = document.getElementById('pwInput');
+    const eye = document.getElementById('pwEye');
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+    eye.textContent = inp.type === 'password' ? '👁' : '🙈';
+  };
+
+  document.getElementById('pwInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') checkPw();
+  });
+})();
+
+// ─── CATEGORY FILTER ─────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.filter-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const f = tab.dataset.filter;
+      document.querySelectorAll('.ai-tool-card').forEach(card => {
+        if (f === 'all') { card.style.display = ''; return; }
+        if (f === 'free') { card.style.display = card.dataset.free === 'true' ? '' : 'none'; return; }
+        card.style.display = card.dataset.cats === f ? '' : 'none';
+      });
+    });
+  });
+});
+</script>
 </body>
 </html>

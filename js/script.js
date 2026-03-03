@@ -161,14 +161,20 @@ function renderTeachers() {
   const grid = document.getElementById('teachersGrid');
   if (!grid || !SITE_CONTENT.teachers) return;
 
-  grid.innerHTML = SITE_CONTENT.teachers.map((t_, i) => {
-    const name = t_[`name${cap(currentLang)}`] || t_.nameRu;
-    const role = t_[`role${cap(currentLang)}`] || t_.roleRu;
-    const bio  = t_[`bio${cap(currentLang)}`]  || t_.bioRu;
-    const delay = i > 0 ? ` reveal-delay-${Math.min(i, 4)}` : '';
+  // Expected order from content.js:
+  // [0] Махаббат (founder, centered top)
+  // [1] Айболат [2] Фариза [3] Жандарбек [4] Балауса
+  // [5] Ислам [6] Ғалым [7] Салтанат [8] Жанболат
 
+  const teachers = SITE_CONTENT.teachers;
+
+  function card(t_, i, extra='') {
+    const name  = t_[`name${cap(currentLang)}`] || t_.nameRu;
+    const role  = t_[`role${cap(currentLang)}`] || t_.roleRu;
+    const bio   = t_[`bio${cap(currentLang)}`]  || t_.bioRu;
+    const delay = i > 0 ? ` reveal-delay-${Math.min(i % 4, 4)}` : '';
     return `
-    <div class="teacher-card reveal${delay}">
+    <div class="teacher-card reveal${delay}${extra}">
       <img class="teacher-img" src="${t_.photo}" alt="${name}" loading="lazy">
       <div class="teacher-info">
         <h3>${name}</h3>
@@ -176,8 +182,41 @@ function renderTeachers() {
         <p class="bio">${bio}</p>
       </div>
     </div>`;
-  }).join('');
+  }
 
+  // Row 1: Махаббат — founder, centered, wider card
+  const founder = teachers[0];
+  const founderName = founder[`name${cap(currentLang)}`] || founder.nameRu;
+  const founderRole = founder[`role${cap(currentLang)}`] || founder.roleRu;
+  const founderBio  = founder[`bio${cap(currentLang)}`]  || founder.bioRu;
+  const founderLabel = { ru: 'Основатель', kz: 'Негізші', en: 'Founder' };
+
+  const row1 = `
+  <div style="display:flex;justify-content:center;margin-bottom:18px">
+    <div class="teacher-card teacher-founder reveal" style="max-width:340px;width:100%">
+      <img class="teacher-img" src="${founder.photo}" alt="${founderName}" loading="lazy">
+      <div class="teacher-info">
+        <div style="display:inline-flex;align-items:center;gap:7px;background:linear-gradient(135deg,rgba(30,107,230,0.10),rgba(107,77,230,0.08));border:1px solid rgba(30,107,230,0.18);border-radius:100px;padding:3px 12px;margin-bottom:8px">
+          <span style="font-size:.7rem">👑</span>
+          <span style="font-size:.72rem;font-weight:700;color:var(--blue);letter-spacing:.06em;text-transform:uppercase">${founderLabel[currentLang]}</span>
+        </div>
+        <h3 style="font-size:1.05rem">${founderName}</h3>
+        <p class="role">${founderRole}</p>
+        <p class="bio">${founderBio}</p>
+      </div>
+    </div>
+  </div>`;
+
+  // Row 2: Айболат, Фариза, Жандарбек, Балауса (indices 1–4)
+  const row2 = `<div class="teachers-row">${teachers.slice(1, 5).map((t, i) => card(t, i+1)).join('')}</div>`;
+
+  // Row 3: Ислам, Ғалым, Салтанат, Жанболат (indices 5–8)
+  const row3Teachers = teachers.slice(5, 9);
+  const row3 = row3Teachers.length
+    ? `<div class="teachers-row">${row3Teachers.map((t, i) => card(t, i+1)).join('')}</div>`
+    : '';
+
+  grid.innerHTML = row1 + row2 + row3;
   grid.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 }
 
@@ -635,10 +674,10 @@ function renderAiTools() {
     const desc  = tool[`desc${cap(currentLang)}`] || tool.descRu;
     const tag   = tool[`tag${cap(currentLang)}`]  || tool.tagRu;
     const delay = (i % 4) > 0 ? ` reveal-delay-${i % 4}` : '';
-    const toolCats = cats(tool);
+    const toolCat = tool.category || 'text';
 
     return `
-    <div class="ai-tool-card reveal${delay}" data-free="${tool.free}" data-cats="${toolCats}">
+    <div class="ai-tool-card reveal${delay}" data-free="${tool.free}" data-cats="${toolCat}">
       <div class="ai-tool-header">
         <div class="ai-tool-icon" style="background:${tool.color}22;border:1.5px solid ${tool.color}44">
           <span style="font-size:1.6rem">${tool.emoji}</span>

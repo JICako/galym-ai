@@ -532,3 +532,26 @@ footer { background:var(--footer-bg); border-top:1px solid var(--border); paddin
   -webkit-text-fill-color: transparent; background-clip: text;
 }
 .program-intro-label { color: var(--text-muted); font-size: .85rem; margin-top: 6px; }
+
+/* ══ TEACHERS LAYOUT ══ */
+.teachers-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  margin-bottom: 18px;
+}
+@media (max-width: 1024px) {
+  .teachers-row { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+  .teachers-row { grid-template-columns: 1fr; }
+}
+
+.teacher-founder {
+  border: 2px solid rgba(30,107,230,0.22) !important;
+  background: var(--surface-hover) !important;
+}
+.teacher-founder .teacher-img {
+  width: 110px !important;
+  height: 110px !important;
+}
