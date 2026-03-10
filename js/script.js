@@ -189,10 +189,11 @@ function renderTeachers() {
   const founderName = founder[`name${cap(currentLang)}`] || founder.nameRu;
   const founderRole = founder[`role${cap(currentLang)}`] || founder.roleRu;
   const founderBio  = founder[`bio${cap(currentLang)}`]  || founder.bioRu;
-  const founderLabel = { ru: 'Основатель', kz: 'Негізші', en: 'Founder' };
+  const founderLabel = { ru: 'Основатель', kz: 'Негізін қалаушы', en: 'Founder' };
 
   const row1 = `
-  <div style="display:flex;justify-content:center;margin-bottom:18px">
+  <div style="display:flex;justify-content:center;margin-bottom:18
+  px">
     <div class="teacher-card teacher-founder reveal" style="max-width:340px;width:100%">
       <img class="teacher-img" src="${founder.photo}" alt="${founderName}" loading="lazy">
       <div class="teacher-info">
