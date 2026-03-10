@@ -551,7 +551,3 @@ footer { background:var(--footer-bg); border-top:1px solid var(--border); paddin
   border: 2px solid rgba(30,107,230,0.22) !important;
   background: var(--surface-hover) !important;
 }
-.teacher-founder .teacher-img {
-  width: 110px !important;
-  height: 110px !important;
-}
