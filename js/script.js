@@ -47,23 +47,12 @@ function updateThemeButtons() {
 
 
 // ────────────────────────────────────────────
-// 2. ЯЗЫК (RU / KZ / EN)
+// 2. ТІЛ — тек қазақша
 // ────────────────────────────────────────────
-const LANG_KEY = 'galym_lang';
-let currentLang = localStorage.getItem(LANG_KEY) || 'ru';
-
-function setLang(lang) {
-  currentLang = lang;
-  localStorage.setItem(LANG_KEY, lang);
-  applyTranslations();
-  updateLangButtons();
-  renderDynamicContent(); // обновить динамический контент при смене языка
-}
+const currentLang = 'kz';
 
 function t(key) {
-  return (i18n[currentLang] && i18n[currentLang][key])
-      || (i18n.ru && i18n.ru[key])
-      || key;
+  return (i18n.kz && i18n.kz[key]) || key;
 }
 
 function applyTranslations() {
@@ -76,15 +65,11 @@ function applyTranslations() {
   document.querySelectorAll('[data-i18n-html]').forEach(el => {
     el.innerHTML = t(el.getAttribute('data-i18n-html')).replace(/\n/g, '<br>');
   });
-  document.documentElement.lang = currentLang;
+  document.documentElement.lang = 'kz';
 }
 
-function updateLangButtons() {
-  document.querySelectorAll('.lang-btn').forEach(b =>
-    b.classList.toggle('active', b.dataset.lang === currentLang)
-  );
-}
-
+function setLang() {}        // бос — үйлесімділік үшін
+function updateLangButtons() {} // бос — үйлесімділік үшін
 
 // ────────────────────────────────────────────
 // 3. ФОНОВАЯ КАРТИНКА (из content.js)
@@ -492,11 +477,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Render dynamic content from content.js
   renderDynamicContent();
-
-  // Language button clicks
-  document.querySelectorAll('.lang-btn').forEach(btn => {
-    btn.addEventListener('click', () => setLang(btn.dataset.lang));
-  });
 
   // Theme toggle clicks
   document.querySelectorAll('.theme-toggle').forEach(btn => {
