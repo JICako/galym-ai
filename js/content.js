@@ -324,7 +324,7 @@ const SITE_CONTENT = {
   backgrounds: {
     // Главное фоновое изображение (одно на весь сайт)
     // Тема: AI / нейросеть / схемы
-    main: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=1920&q=90&auto=format&fit=crop",
+    main: "bg.png",
     // Запасное изображение (если первое не загрузится)
     fallback: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=1920&q=80&auto=format&fit=crop",
   },
