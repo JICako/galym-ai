@@ -114,8 +114,8 @@ function renderCourses() {
   };
 
   grid.innerHTML = SITE_CONTENT.courses.map(c => {
-    const title = c[`title${cap(currentLang)}`] || c.titleRu;
-    const desc  = c[`desc${cap(currentLang)}`]  || c.descRu;
+    const title = c.title;
+    const desc  = c.desc;
     const level = levelLabels[c.level]?.[currentLang] || c.level;
     const months = currentLang === 'kz' ? 'ай' : currentLang === 'en' ? 'mo.' : 'мес.';
     const lessons = currentLang === 'kz' ? 'сабақ' : currentLang === 'en' ? 'lessons' : 'уроков';
@@ -154,9 +154,9 @@ function renderTeachers() {
   const teachers = SITE_CONTENT.teachers;
 
   function card(t_, i, extra='') {
-    const name  = t_[`name${cap(currentLang)}`] || t_.nameRu;
-    const role  = t_[`role${cap(currentLang)}`] || t_.roleRu;
-    const bio   = t_[`bio${cap(currentLang)}`]  || t_.bioRu;
+    const name  = t_.name;
+    const role  = t_.role;
+    const bio   = t_.bio;
     const delay = i > 0 ? ` reveal-delay-${Math.min(i % 4, 4)}` : '';
     return `
     <div class="teacher-card reveal${delay}${extra}">
@@ -171,9 +171,9 @@ function renderTeachers() {
 
   // Row 1: Махаббат — founder, centered, wider card
   const founder = teachers[0];
-  const founderName = founder[`name${cap(currentLang)}`] || founder.nameRu;
-  const founderRole = founder[`role${cap(currentLang)}`] || founder.roleRu;
-  const founderBio  = founder[`bio${cap(currentLang)}`]  || founder.bioRu;
+  const founderName = founder.name;
+  const founderRole = founder.role;
+  const founderBio  = founder.bio;
   const founderLabel = { ru: 'Основатель', kz: 'Негізші', en: 'Founder' };
 
   const row1 = `
@@ -211,9 +211,9 @@ function renderNews() {
   if (!grid || !SITE_CONTENT.news) return;
 
   grid.innerHTML = SITE_CONTENT.news.map((n, i) => {
-    const date  = n[`date${cap(currentLang)}`]  || n.dateRu;
-    const title = n[`title${cap(currentLang)}`] || n.titleRu;
-    const text  = n[`text${cap(currentLang)}`]  || n.textRu;
+    const date  = n.date;
+    const title = n.title;
+    const text  = n.text;
     const readMore = { ru: 'Смотреть фото →', kz: 'Фотоларды қарау →', en: 'View photos →' };
     const delay = i > 0 ? ` reveal-delay-${Math.min(i, 4)}` : '';
 
@@ -260,9 +260,9 @@ function openGallery(newsIndex) {
   galleryCurrentPhoto = 0;
   const overlay = document.getElementById('galleryOverlay');
   if (!overlay) return;
-  document.getElementById('galleryDate').textContent  = ev[`date${cap(currentLang)}`]  || ev.dateRu;
-  document.getElementById('galleryTitle').textContent = ev[`title${cap(currentLang)}`] || ev.titleRu;
-  document.getElementById('galleryText').textContent  = ev[`text${cap(currentLang)}`]  || ev.textRu;
+  document.getElementById('galleryDate').textContent  = ev.date;
+  document.getElementById('galleryTitle').textContent = ev.title;
+  document.getElementById('galleryText').textContent  = ev.text;
   const videoSection = document.getElementById('galleryVideos');
   if (videoSection) { videoSection.innerHTML = ''; videoSection.style.display = 'none'; }
   const thumbs = document.getElementById('galleryThumbs');
@@ -537,9 +537,9 @@ function renderEvents() {
   if (!grid || typeof SITE_CONTENT === 'undefined' || !SITE_CONTENT.events) return;
 
   grid.innerHTML = SITE_CONTENT.events.map((ev, i) => {
-    const date  = ev[`date${cap(currentLang)}`]  || ev.dateRu;
-    const title = ev[`title${cap(currentLang)}`] || ev.titleRu;
-    const text  = ev[`text${cap(currentLang)}`]  || ev.textRu;
+    const date  = ev.date;
+    const title = ev.title;
+    const text  = ev.text;
     const viewLabel = { ru: 'Смотреть →', kz: 'Қарау →', en: 'View →' };
     const photoCount = ev.photos?.length || 0;
     const videoCount = ev.videos?.length || 0;
@@ -580,9 +580,9 @@ function openEventModal(idx) {
   const overlay = document.getElementById('galleryOverlay');
   if (!overlay) return;
 
-  document.getElementById('galleryDate').textContent  = event[`date${cap(currentLang)}`]  || event.dateRu;
-  document.getElementById('galleryTitle').textContent = event[`title${cap(currentLang)}`] || event.titleRu;
-  document.getElementById('galleryText').textContent  = event[`text${cap(currentLang)}`]  || event.textRu;
+  document.getElementById('galleryDate').textContent  = event.date;
+  document.getElementById('galleryTitle').textContent = event.title;
+  document.getElementById('galleryText').textContent  = event.text;
 
   // Если есть видео — показываем раздел видео
   const videoSection = document.getElementById('galleryVideos');
@@ -651,8 +651,8 @@ function renderAiTools() {
   };
 
   grid.innerHTML = SITE_CONTENT.aiTools.map((tool, i) => {
-    const desc  = tool[`desc${cap(currentLang)}`] || tool.descRu;
-    const tag   = tool[`tag${cap(currentLang)}`]  || tool.tagRu;
+    const desc  = tool.desc;
+    const tag   = tool.tag;
     const delay = (i % 4) > 0 ? ` reveal-delay-${i % 4}` : '';
     const toolCat = tool.category || 'text';
 
@@ -683,4 +683,13 @@ function renderAiTools() {
   }).join('');
 
   grid.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+}
+
+// ─── Кері байланыс формасын ашу ─────────────────────────
+function openFeedbackForm(e) {
+  if (e) e.preventDefault();
+  const url = (typeof SITE_CONTENT !== 'undefined' && SITE_CONTENT.contacts && SITE_CONTENT.contacts.googleForms)
+    ? SITE_CONTENT.contacts.googleForms
+    : 'https://forms.google.com';
+  window.open(url, '_blank');
 }
